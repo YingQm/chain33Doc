@@ -23,7 +23,7 @@ def getPage(cid):
     }
 
     headers = {
-        'Connection': 'keep-alive',
+        'Connection': 'close',
         'Cache-Control': 'max-age=0',
         'Upgrade-Insecure-Requests': '1',
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.92 Safari/537.36',
@@ -77,9 +77,10 @@ print("now start to backup chinese docs...")
 for cid in chineseCids:
 	rsp = getPage(cid)
 	data=json.loads(rsp.text)
+	title=data['title']
 	print("-------" + cid + "-------")
 
-	fileName = chBackupPath + cid
+	fileName = chBackupPath + title
 	writeToFile(fileName, data)
 #	time.sleep(1)
 
@@ -87,8 +88,9 @@ print("now start to backup english docs...")
 for cid in engCids:
 	rsp = getPage(cid)
 	data = json.loads(rsp.text)
+	title=data['title']
 	print("-------" + cid + "-------")
-	fileName = enBackupPath + cid
+	fileName = enBackupPath + title
 	writeToFile(fileName, data)
 
 #	time.sleep(1)
@@ -102,6 +104,5 @@ for dirpath, dirnames, filenames in os.walk(startdir):
 	fpath = fpath and fpath + os.sep or ''
 	for filename in filenames:
 		z.write(os.path.join(dirpath, filename), fpath + filename)
-
 print('compress to ' + file_new +' ok')
 z.close()
