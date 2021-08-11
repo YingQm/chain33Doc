@@ -11,7 +11,7 @@ PRC provides various system services to external applications by providing a ser
 ## 2 Logical Architecture and Context
 ### 2.1 Relationship Between Cli Module and Chain33
 
-![](https://public.zhaobi.tech/web/storage/upload/20190717/2a4dc288adf69248ef64ed74fa5ad591.jpg)
+![](https://public.33.cn/web/storage/upload/20190717/2a4dc288adf69248ef64ed74fa5ad591.jpg)
 
 1 Call the corresponding PRC interface depending on the instructions entered
 

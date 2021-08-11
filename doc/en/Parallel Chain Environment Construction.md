@@ -19,7 +19,7 @@ Value ParaRemoteGrpcClient as："101.37.227.226:8802,39.97.20.242:8802,47.107.15
 
 
 The modifications are shown below：
-![paraRemoteGrpcClient](https://public.zhaobi.tech/web/storage/upload/20190718/4b0828fecc5b4604c1cab783468269e6.png "paraRemoteGrpcClient")
+![paraRemoteGrpcClient](https://public.33.cn/web/storage/upload/20190718/4b0828fecc5b4604c1cab783468269e6.png "paraRemoteGrpcClient")
 
 
 Start Chain33 process

@@ -5,7 +5,7 @@
 
 App(Application), what we usually call software, has undergone several generations of evolution in the limited decades since the birth of computers. It can be summarized as follows:
 
-![App Development History](https://public.zhaobi.tech/web/storage/upload/20190717/b8831d163089f33cf374db7e4d3b97c8.jpg "App Development History")
+![App Development History](https://public.33.cn/web/storage/upload/20190717/b8831d163089f33cf374db7e4d3b97c8.jpg "App Development History")
 
 - **Stand-Alone App:**
 
@@ -50,7 +50,7 @@ However, Contracts at DApp are procedural logic that can be deployed over blockc
 
 A typical DApp consists of the following:
 
-![DApp Composition](https://public.zhaobi.tech/web/storage/upload/20181114/c33a38f7419b1f47291ac80d520e0e98.png "DApp Composition")
+![DApp Composition](https://public.33.cn/web/storage/upload/20181114/c33a38f7419b1f47291ac80d520e0e98.png "DApp Composition")
 
 - **Front End：**
 
@@ -67,7 +67,7 @@ A typical DApp consists of the following:
 
 **A Normal DApp Development Process is Shown in the Figure Below:**
 
-![DApp Development Process](https://public.zhaobi.tech/web/storage/upload/20190717/514d2828bc87366fe929289d6a682128.jpg "DApp Development Process")
+![DApp Development Process](https://public.33.cn/web/storage/upload/20190717/514d2828bc87366fe929289d6a682128.jpg "DApp Development Process")
 
 In fact, it mainly includes the development of front-end and contract. The contract is deployed on the blockchain network, which is the main execution logic of DApp and the front-end is the user interface.
 
@@ -88,7 +88,7 @@ Chain33 was designed as a highly extensible blockchain development platform that
 
 Check the position of DApp in the system of Chain33:
 
-![chain33 arch](https://public.zhaobi.tech/web/storage/upload/20181114/263b976261a440e456fcebe0a2bb7c04.png "chain33 arch")
+![chain33 arch](https://public.33.cn/web/storage/upload/20181114/263b976261a440e456fcebe0a2bb7c04.png "chain33 arch")
 
 As shown in the upper left part of the figure above, Chain33 provides the DApp Framework with three elements: the executor, the command line, and RPC, where the executor is the contract logic of the DApp.
 

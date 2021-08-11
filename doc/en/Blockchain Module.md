@@ -10,7 +10,7 @@ Blockchain module is a component that processes blocks, including storing block 
 
 ### 2.1 Blockchain Context
 
-![Blockchain Context](https://public.zhaobi.tech/web/storage/upload/20190717/10d07c1870f0b3acf65c75354b9e2b45.png)
+![Blockchain Context](https://public.33.cn/web/storage/upload/20190717/10d07c1870f0b3acf65c75354b9e2b45.png)
 
 - Interaction with Consensus module: handle blocks the Consensus module packaged, and the request of Consensus module to query block information
 

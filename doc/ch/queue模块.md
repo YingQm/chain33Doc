@@ -13,7 +13,7 @@
 
 > 下图就是各模块与queue模块的关联关系
 
-![queue模块](https://public.zhaobi.tech/web/storage/upload/20190717/57ea02f910de15630379153582eb7556.png "queue模块")
+![queue模块](https://public.33.cn/web/storage/upload/20190717/57ea02f910de15630379153582eb7556.png "queue模块")
 
 > 注意:
 

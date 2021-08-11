@@ -17,7 +17,7 @@ Therefore, the executor module is a container, which supports the operation of v
 
 The role of the executor module in the overall chain33 system is shown below:
 
-![Executor context](https://public.zhaobi.tech/web/storage/upload/20190717/f0d8c1bd4cf33de7532483a3556ada75.png)
+![Executor context](https://public.33.cn/web/storage/upload/20190717/f0d8c1bd4cf33de7532483a3556ada75.png)
 
 The external capability of the executor is reflected in 5 interfaces:
 
@@ -38,7 +38,7 @@ Three write interfaces:
 > Internal logic structure of the executor
 > 
 
-![Internal logic structure of the executor](https://public.zhaobi.tech/web/storage/upload/20190717/78d5a67347c5f1984d4829da60ec6314.png)
+![Internal logic structure of the executor](https://public.33.cn/web/storage/upload/20190717/78d5a67347c5f1984d4829da60ec6314.png)
 
 As shown in the figure above, the executor is a container framework that contains some generic scheduling logic, distributes requests to specific executor contracts for execution and collects the results back.
 
@@ -392,7 +392,7 @@ func (c *XXX) ExecDelLocal_XYZ(action *types.XXXyz, tx *types.Transaction, recei
 
 ### 3.6 The overall processing logic of the executor
 
-![excutor-call-back-framework](https://public.zhaobi.tech/web/storage/upload/20190717/d39f2dd721b93f39faec7ce7057dffaf.png "excutor-call-back-framework")
+![excutor-call-back-framework](https://public.33.cn/web/storage/upload/20190717/d39f2dd721b93f39faec7ce7057dffaf.png "excutor-call-back-framework")
 
 ## 4 Secondary Development
 
@@ -403,7 +403,7 @@ This executor implements a simple message corresponding function and supports tw
 
 The executor directory structure is as follows:
 
-![开发目录结构](https://public.zhaobi.tech/web/storage/upload/20181109/19a58fd34a7094bd95cfdca24f200811.png)
+![开发目录结构](https://public.33.cn/web/storage/upload/20181109/19a58fd34a7094bd95cfdca24f200811.png)
 
 Three of these directories's functions are as follows:
 

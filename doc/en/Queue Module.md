@@ -11,7 +11,7 @@ The main purpose is to reduce the coupling of the individual modules in Chain33.
 ##  2. Logical Architecture and Context
 
 > The diagram below shows the correlation between each module and the queue module
-![Queue Module](https://public.zhaobi.tech/web/storage/upload/20190717/57ea02f910de15630379153582eb7556.png "Queue Module")
+![Queue Module](https://public.33.cn/web/storage/upload/20190717/57ea02f910de15630379153582eb7556.png "Queue Module")
 
 > Note:
 

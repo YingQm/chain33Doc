@@ -67,11 +67,11 @@ $ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." bl
 
 创建新的solidity合约，并选择编译器版本进行编译。
 
-![remix_prepare](https://public.zhaobi.tech/web/storage/upload/20190226/23cc7ad57c6c3c5d76bc7b665e7114a2.png "remix_prepare")
+![remix_prepare](https://public.33.cn/web/storage/upload/20190226/23cc7ad57c6c3c5d76bc7b665e7114a2.png "remix_prepare")
 
 编译成功后，可以使用ABI、Bytecode进行合约的创建。
 
-![remix_compare](https://public.zhaobi.tech/web/storage/upload/20190226/6de5d85d0fb53a47930b742f41cd57c6.png "remix_compare")
+![remix_compare](https://public.33.cn/web/storage/upload/20190226/6de5d85d0fb53a47930b742f41cd57c6.png "remix_compare")
 
 * Remix生成的abi存在换行、空格等字符，chain33实现的evm不能直接使用，还需要进行进一步的格式化操作：去除换行、空格。
 * Chrome浏览器不支持编译后abi、bin文件的拷贝，因此尽量使用Edge或者IE浏览器。
@@ -89,7 +89,7 @@ $ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." bl
 #### 2.2.1 插件安装
 打开IntelliJ IDEA，在File->Settings->Plugins选项卡中，查找IntelliJ-Solidity插件进行安装。
 
-![intelliJ_solidity](https://public.zhaobi.tech/web/storage/upload/20190226/4a61b115ef65e813c75c306e1f0209eb.png "intelliJ_solidity")
+![intelliJ_solidity](https://public.33.cn/web/storage/upload/20190226/4a61b115ef65e813c75c306e1f0209eb.png "intelliJ_solidity")
 
 #### 2.2.2 solc安装
 本地没有安装genth节点，可以直接获取chain33官方编译好的版本或者使用代码进行本地编译；
@@ -109,7 +109,7 @@ Windows系统环境选择solidity-windows.zip项进行下载，解压后将solc.
 获取食品溯源合约 [food.sol](https://github.com/harrylee2015/L/blob/master/share/solidity/food.sol)
 打开IntelliJ IDEA，使用Build->Compile Solidity编译合约，编译后的结果可以在项目栏中看到。
 
-![compile_solidity](https://public.zhaobi.tech/web/storage/upload/20190226/e286d4e377ffecd8271eec3ef4a36f4e.png "compile_solidity")
+![compile_solidity](https://public.33.cn/web/storage/upload/20190226/e286d4e377ffecd8271eec3ef4a36f4e.png "compile_solidity")
 
 也可以通过命令行来进行合约的编译：
 

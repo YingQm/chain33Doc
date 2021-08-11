@@ -13,7 +13,7 @@ Limit traffic to the sender to prevent the same address from being sent too ofte
 ##  2. Logical Architecture and Context
 
 > The following is a message interaction diagram between each module and Mempool
-![Mempool Module interaction logic diagram](https://public.zhaobi.tech/web/storage/upload/20190717/e50d3f6d985e4e5ffcc390190f4d6ead.png)
+![Mempool Module interaction logic diagram](https://public.33.cn/web/storage/upload/20190717/e50d3f6d985e4e5ffcc390190f4d6ead.png)
 
 > Interaction between Mempool and Clockchain
 

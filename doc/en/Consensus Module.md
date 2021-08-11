@@ -18,7 +18,7 @@ Currently the consensus module in Chain33 is pluggable and supports algorithms s
 
 The role of the consensus module in the overall chain33 system is shown below:
 
-![共识模块上下文](https://public.zhaobi.tech/web/storage/upload/20181112/eab9ecc720d53ae30df8020bc05c2de2.png)
+![共识模块上下文](https://public.33.cn/web/storage/upload/20181112/eab9ecc720d53ae30df8020bc05c2de2.png)
 
 The consensus module is a bridge connecting the transaction and the block, and its role is mainly reflected in promoting the production of the block. All events emitted by the consensus module try to achieve this goal.
 
@@ -36,7 +36,7 @@ The consensus module is a bridge connecting the transaction and the block, and i
 
 > The internal logic of the consensus module
 
-![共识模块内部图](https://public.zhaobi.tech/web/storage/upload/20181112/25581fa6b8d18968912bde50324c9ba8.png)
+![共识模块内部图](https://public.33.cn/web/storage/upload/20181112/25581fa6b8d18968912bde50324c9ba8.png)
 
 As shown in the figure above, the Consensus module implements the main logical functions: Miner() and Module().
 

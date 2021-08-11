@@ -8,7 +8,7 @@
 ### 1. Chain33 RPC接口编程操作区块链的说明  
 
 示意图如下：
-![RPC接口调用](https://public.zhaobi.tech/web/storage/upload/20200225/ace398994475ea9ccf3da7aa32efca42.png)
+![RPC接口调用](https://public.33.cn/web/storage/upload/20200225/ace398994475ea9ccf3da7aa32efca42.png)
 
 需要和区块链进行交互（向区块链提交交易数据或者从区块链上查询交易信息等）的应用系统，可以使用不同的编程语言：Go、Python、C++等进行符合chain33 rpc接口的编程，按接口定义构造json rpc请求，向chain33节点的json rpc服务端口发起请求。  
 

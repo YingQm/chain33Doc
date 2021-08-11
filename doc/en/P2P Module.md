@@ -10,7 +10,7 @@ P2P module is a component that processes communication between nodes, including 
 
 ### 2.1 P2P Context
 
-![P2P Context](https://public.zhaobi.tech/web/storage/upload/20190717/320195747bd0553ca55f1474f4135ec5.png)
+![P2P Context](https://public.33.cn/web/storage/upload/20190717/320195747bd0553ca55f1474f4135ec5.png)
 
 - Interaction with the Mempool module: broadcast the transactions sent by the Mempool module and obtain the transactions in the Mempool module
 - Interactions with Blockchain module: broadcast blocks sent by Blockchain modules, process requests for peer information and requests for downloading blocks and block headers from peer node

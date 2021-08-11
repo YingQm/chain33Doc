@@ -10,7 +10,7 @@ Blockchain 模块是处理 block 的组件，包括存储 block 信息，将 blo
 
 ### 2.1 Blockchain 上下文
 
-![Blockchain上下文](https://public.zhaobi.tech/web/storage/upload/20190717/0d0f0c3e5588512428222175a8f8b085.jpg)
+![Blockchain上下文](https://public.33.cn/web/storage/upload/20190717/0d0f0c3e5588512428222175a8f8b085.jpg)
 
 - 与 Consensus 模块的交互：处理 Consensus 模块打包的区块，处理 Consensus 模块查询 block 信息的请求
 

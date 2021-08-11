@@ -185,3 +185,36 @@
 |data|string|当前节点的主代币信息, 如 bty|
 
 
+
+### 1.6 获取系统支持签名类型 GetCryptoList
+**请求报文<!--[types/ReqNil]-->：**
+```json
+{
+    "jsonrpc":"2.0",
+    "id":int32,
+    "method":"Chain33.GetCryptoList",
+    "params":[]
+}
+```
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|
+
+**响应报文：**
+```json
+{
+   "id" : int32,
+   "error" : string,
+   "result" : {
+      "cryptos" : [{"name":"secp256k1", "typeID":1}]
+   }
+}
+```
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|cryptos|数组|签名类型数组|
+|name|string|签名类型名称|
+|typeID|int32|签名类型ID|

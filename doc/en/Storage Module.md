@@ -48,7 +48,7 @@ For the storage module of chain33, there are several points:
 ## 2 Logical Architecture and Context
 ### 2.1 Storage Module Context
 
-![存储模块上下文](https://public.zhaobi.tech/web/storage/upload/20181112/b7b857998ffa8991c7f924688f3d97de.png)
+![存储模块上下文](https://public.33.cn/web/storage/upload/20181112/b7b857998ffa8991c7f924688f3d97de.png)
  
 1. P2P, Wallet, Blockchain and Store all involve data storage, write and read data to KV DB instance through DB interface. 
 
@@ -62,13 +62,13 @@ For the storage module of chain33, there are several points:
 
 ### 2.2 Underlying Logical Architecture Storing KV DB
 
-![DB接口](https://public.zhaobi.tech/web/storage/upload/20181112/2ac6b472bb2062ff64d08a72b57dc651.png)
+![DB接口](https://public.33.cn/web/storage/upload/20181112/2ac6b472bb2062ff64d08a72b57dc651.png)
 
 KV DB supported by the underlying data storage needs to adapt to the above interfaces
 
 Take goleveldb as an example:
 
-![goleveldb](https://public.zhaobi.tech/web/storage/upload/20181112/6013bca4a156733396fd8fe7978587ce.png)
+![goleveldb](https://public.33.cn/web/storage/upload/20181112/6013bca4a156733396fd8fe7978587ce.png)
 
 You can see that when goleveldb implements the DB interface, Iterator interface, and Batch interface, it can be used in the chain33 system as an underlying database implementation of the Storage module.  
 
@@ -76,9 +76,9 @@ Different KV DB implementations, such as gobadgerdb, gomemdb and gossdb, are all
 
 ### 2.3 Logical Architecture of StateDB and LocalDB  
   
-![StateDB和LocalDB的逻辑架构](https://public.zhaobi.tech/web/storage/upload/20181112/2124472787cfa2a9f8eb1b39153be485.png)
+![StateDB和LocalDB的逻辑架构](https://public.33.cn/web/storage/upload/20181112/2124472787cfa2a9f8eb1b39153be485.png)
 
-![chain33-statedb](https://public.zhaobi.tech/web/storage/upload/20181112/211d68a6d3cd739db3ac623c5ee55c7e.png)
+![chain33-statedb](https://public.33.cn/web/storage/upload/20181112/211d68a6d3cd739db3ac623c5ee55c7e.png)
 
 As you can see, the function of these two abstract databases is very simple. What is misleading is the usage scenario and storage content of the two DB, so the following table shows the differences between the two DBs.
 
@@ -93,7 +93,7 @@ As you can see, the function of these two abstract databases is very simple. Wha
 
 ### 2.4 Store Logical Architecture
 
-![Store Logical Architecture](https://public.zhaobi.tech/web/storage/upload/20181112/a53f6aace4129a780eeca741d7faa44b.png)
+![Store Logical Architecture](https://public.33.cn/web/storage/upload/20181112/a53f6aace4129a780eeca741d7faa44b.png)
 
 1. The Store layer determines which format the state data will be organized in in the underlying KV DB.  
 2. By default, the system supports the implementation of mavl tree format. By loading plug-ins, it can also support the implementation of KV DB, KV DB based on MVCC, and MPT.

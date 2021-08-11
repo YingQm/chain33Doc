@@ -135,7 +135,7 @@ Local environment means that Chain33 runs on the local private network and is on
 
 Here we introduce how to build a private Chain33 blockchain network
 
-![Local Environment](https://public.zhaobi.tech/web/storage/upload/20190717/d9146257f02dd91fa2090d9855cffde4.png)
+![Local Environment](https://public.33.cn/web/storage/upload/20190717/d9146257f02dd91fa2090d9855cffde4.png)
 
 First, modify the configuration file. All three nodes have the same configuration file. Here are just some of the differences of cmd/chain33/chain33.toml 
 
@@ -246,7 +246,7 @@ startHeight=1620000
     8902:   Grpc Service port
 
 
-![env diagram](https://public.zhaobi.tech/web/storage/upload/20190717/00b56b768239a2d14b45bcb4607f4b67.jpg "env diagram")
+![env diagram](https://public.33.cn/web/storage/upload/20190717/00b56b768239a2d14b45bcb4607f4b67.jpg "env diagram")
 
 ### 3.4.3 Run Main/Parallel Chain Nodes
 

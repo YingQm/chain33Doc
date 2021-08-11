@@ -10,7 +10,7 @@ The following contents of this article, on the basis of the development of the e
 
 The project directory structure is as follows:
 
-![project directory](https://public.zhaobi.tech/web/storage/upload/20181115/f6f948a6985cd4e828e0c049a58f225b.png "project directory")
+![project directory](https://public.33.cn/web/storage/upload/20181115/f6f948a6985cd4e828e0c049a58f225b.png "project directory")
 
 In addition to the original executor, the commands and RPC packages have been added, respectively corresponding to specific implementation code.
 

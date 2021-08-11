@@ -8,13 +8,13 @@
 First. use online environment  
 >	<a href="https://remix.ethereum.org/" target="_blank" title="Online Remix Url">Online Remix Url</a>,use online IDE to develop smart contract,it's the simplest way if the network speed is ok.
   
-![在线地址图片](https://public.zhaobi.tech/web/storage/upload/20181115/7d0284e64a0da8703415097351eca36d.png)
+![在线地址图片](https://public.33.cn/web/storage/upload/20181115/7d0284e64a0da8703415097351eca36d.png)
 
 Second. set up the offline environment locally
 
 >   Download the official packaged<a href="https://github.com/ethereum/browser-solidity/blob/gh-pages/remix-7013ed1.zip" target="_blank" title="offline version"> offline version</a>, after local decompression, use the browser open index.html
 
-![offline env diagram](https://public.zhaobi.tech/web/storage/upload/20181115/2f3ddb8fa4da1dbf252e119d963b22b0.png)
+![offline env diagram](https://public.33.cn/web/storage/upload/20181115/2f3ddb8fa4da1dbf252e119d963b22b0.png)
 
 Third. set up the online environment locally
 
@@ -42,7 +42,7 @@ Or you can clone the entire github library (you need to install wget first) :
 ### 1.2.1 Write Contract Code
 >	**step1：**Click the `+` sign in the upper left corner of online remix, Cteate New File in the Browser Storage Explorer, name does not matter, and extension is "xxx.sol".
 
-![+](https://public.zhaobi.tech/web/storage/upload/20181112/60afc760f6af446f33cd24875b3afa68.png)
+![+](https://public.33.cn/web/storage/upload/20181112/60afc760f6af446f33cd24875b3afa68.png)
     
 >	**step2:**Here is a simple case code, which reads as follows:  
 
@@ -62,11 +62,11 @@ Or you can clone the entire github library (you need to install wget first) :
 
 >	**step3: **Click the button on the right of the IDE screen, Start to compile. If there are no errors, the screenshot below shows:
 
-![Start to compile](https://public.zhaobi.tech/web/storage/upload/20181112/2efb1ec9902b26fea2e695e11e3e5491.png)
+![Start to compile](https://public.33.cn/web/storage/upload/20181112/2efb1ec9902b26fea2e695e11e3e5491.png)
 
 >	**step4: **Click the`run`button, and then click`Create` to Create a string of code for the contract deployment. You can see the interface used by the contract
 
-![合约部署](https://public.zhaobi.tech/web/storage/upload/20181112/c1dfd1550734b7bea8579e308a759baf.png "合约部署")
+![合约部署](https://public.33.cn/web/storage/upload/20181112/c1dfd1550734b7bea8579e308a759baf.png "合约部署")
 
     In the screenshot, '3' is shown as the input code for the contract code interface deployment:0x608060405234801561001057600080fd5b5060df8061001f6000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806360fe47b114604e5780636d4ce63c146078575b600080fd5b348015605957600080fd5b5060766004803603810190808035906020019092919050505060a0565b005b348015608357600080fd5b50608a60aa565b6040518082815260200191505060405180910390f35b8060008190555050565b600080549050905600a165627a7a72305820400d8ac26862c8658a699fc570c2a260485d7d8747b8bb9541264fdf2e7d9aeb0029
 
@@ -76,7 +76,7 @@ Or you can clone the entire github library (you need to install wget first) :
 input code of set：0x60fe47b10000000000000000000000000000000000000000000000000000000000000064  
 input code of get：0x6d4ce63c
 
-![调用合约方法](https://public.zhaobi.tech/web/storage/upload/20181112/800c6b194a04b3caacb8e74e2dbb9fd5.png "调用合约方法")
+![调用合约方法](https://public.33.cn/web/storage/upload/20181112/800c6b194a04b3caacb8e74e2dbb9fd5.png "调用合约方法")
 
 ---
 ## 1.3 Deploy Smart Contracts Using Cli Debugging Tools

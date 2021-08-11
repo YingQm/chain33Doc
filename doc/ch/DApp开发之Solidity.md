@@ -13,13 +13,13 @@
 
 >	<a href=" http://remix.ethereum.org/#optimize=false&evmVersion=null&version=soljson-v0.5.12+commit.7709ece9.js" target="_blank" title="在线Remix网址">在线Remix网址</a>,使用在线IDE进行开发，如果网速可以的话，这种方法最简单。
 
-![remix在线地址图片](https://public.zhaobi.tech/web/storage/upload/20200107/73d46f21645b489737ac9948ae6b8508.png "remix-home")
+![remix在线地址图片](https://public.33.cn/web/storage/upload/20200107/73d46f21645b489737ac9948ae6b8508.png "remix-home")
 
 二. 本地搭建离线环境  
 
 >   下载官方打包好的<a href="https://github.com/ethereum/browser-solidity/blob/gh-pages/remix-7013ed1.zip" target="_blank" title="离线版本">离线版本</a>，在本地解压缩后，使用浏览器打开index.html
 
-![离线环境图片](https://public.zhaobi.tech/web/storage/upload/20200107/c4dd1e404c8d2e13e19fe37c63425956.png "离线环境图片")
+![离线环境图片](https://public.33.cn/web/storage/upload/20200107/c4dd1e404c8d2e13e19fe37c63425956.png "离线环境图片")
 
 三. 本地搭建在线环境
 
@@ -53,7 +53,7 @@
 
 >	**step1：**点击在线remix左上角的`+`号，创建一个新的合约文件，名称任意，扩展名是 “xxx.sol”。
 
-![+](https://public.zhaobi.tech/web/storage/upload/20200107/8696a44d14b251c368c603f1b26338a4.png "+")    
+![+](https://public.33.cn/web/storage/upload/20200107/8696a44d14b251c368c603f1b26338a4.png "+")    
 
 ---
 
@@ -82,27 +82,27 @@
 
 > **step3:**   点击remix页面左边的plugin manager，激活Deploy&run transactions和Solidity compiler 模块
 
-![激活编译和部署模块](https://public.zhaobi.tech/web/storage/upload/20200107/baa0ac25356fb1f7ef0825aa9469cb16.png "激活编译和部署模块")
+![激活编译和部署模块](https://public.33.cn/web/storage/upload/20200107/baa0ac25356fb1f7ef0825aa9469cb16.png "激活编译和部署模块")
 
 ### 1.2.2 编译和部署智能合约
 
 >	**step4：**选择编辑好的合约hello_world.sol，点击已激活的编译模块，再点击`Compile hello_world.sol`按钮，如果没有错误，如下截图显示：
 
-![编译合约](https://public.zhaobi.tech/web/storage/upload/20200107/1cb9061b2b464da75c1c40c42a971122.png "编译合约")
+![编译合约](https://public.33.cn/web/storage/upload/20200107/1cb9061b2b464da75c1c40c42a971122.png "编译合约")
 
 > 点击左下角的`Comliation Details`按钮可以看到如下截图的合约编译信息，其中BYTECODE中的object是后面将合约部署到chain33需要用到的。
 
-![合约编译信息](https://public.zhaobi.tech/web/storage/upload/20200107/63aece58152ce942ef0a83c58c60d729.png "合约编译信息")
+![合约编译信息](https://public.33.cn/web/storage/upload/20200107/63aece58152ce942ef0a83c58c60d729.png "合约编译信息")
 
 >	**step5:**点击已激活的合约部署模块，然后点击`Deploy`，此时合约已经部署在了remix提供的测试环境上，合约部署成功，如下截图所示：
 
-![合约部署](https://public.zhaobi.tech/web/storage/upload/20200107/e71d34777ca73b2ffc527d9e900342ae.png "合约部署")
+![合约部署](https://public.33.cn/web/storage/upload/20200107/e71d34777ca73b2ffc527d9e900342ae.png "合约部署")
 
 ### 1.2.3 调用合约方法
 
 >	**step6:**这个合约中只有两个合约方法，set 方法和 get方法，其中set方法有参数，get方法无参数；如要调用合约的set方法，只需要将参数值填写到右侧，然后点击方法名`set`即可调用方法。在下方的控制台中会显示调用合约方法的transaction的详细信息。同理点击`get`方法名调用get方法。合约方法调用如下截图所示：
 
-![调用合约方法](https://public.zhaobi.tech/web/storage/upload/20200107/45c8c863df9fbb3663e4ea5a4b21007a.png "调用合约方法")
+![调用合约方法](https://public.33.cn/web/storage/upload/20200107/45c8c863df9fbb3663e4ea5a4b21007a.png "调用合约方法")
 
 ---
 

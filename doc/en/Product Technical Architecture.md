@@ -5,4 +5,4 @@ The extended functionality is associated with the system framework in a loosely 
 
 Chain33 plug-in architecture is shown below:  
 
-![插件架构图](https://public.zhaobi.tech/web/storage/upload/20181114/b7baad80b9c4cbe18bb964d0a9024acf.png)
+![插件架构图](https://public.33.cn/web/storage/upload/20181114/b7baad80b9c4cbe18bb964d0a9024acf.png)

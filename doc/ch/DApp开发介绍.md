@@ -5,7 +5,7 @@
 
 App（Application）即应用，也就是我们常说的软件，在计算机诞生之后有限的几十年里，也经历了好几代演变，可以简单概括如下：
 
-![App发展史](https://public.zhaobi.tech/web/storage/upload/20190717/b8831d163089f33cf374db7e4d3b97c8.jpg "App发展史")
+![App发展史](https://public.33.cn/web/storage/upload/20190717/b8831d163089f33cf374db7e4d3b97c8.jpg "App发展史")
 
 - **单机App:**
 
@@ -50,7 +50,7 @@ DApp（Decentralized Application）又称“去中心化应用”，是相对传
 
 一个典型的DApp组成如下：
 
-![DApp组成](https://public.zhaobi.tech/web/storage/upload/20181114/c33a38f7419b1f47291ac80d520e0e98.png "DApp组成")
+![DApp组成](https://public.33.cn/web/storage/upload/20181114/c33a38f7419b1f47291ac80d520e0e98.png "DApp组成")
 
 - **前端：**
 
@@ -67,7 +67,7 @@ DApp（Decentralized Application）又称“去中心化应用”，是相对传
 
 **而一个常规的DApp开发流程如下图所示：**
 
-![DApp开发流程](https://public.zhaobi.tech/web/storage/upload/20190717/514d2828bc87366fe929289d6a682128.jpg "DApp开发流程")
+![DApp开发流程](https://public.33.cn/web/storage/upload/20190717/514d2828bc87366fe929289d6a682128.jpg "DApp开发流程")
 
 其实主要就是包含前端和合约两部分内容的开发，合约最终是部署在区块链网络上的，为DApp的主要执行逻辑，前端为用户交互界面；
 
@@ -88,7 +88,7 @@ Chain33被设计为一个支持高度扩展的区块链开发平台，除了极�
 
 可以看一下DApp在整个Chain33体系内所处的位置：
 
-![chain33 arch](https://public.zhaobi.tech/web/storage/upload/20181114/263b976261a440e456fcebe0a2bb7c04.png "chain33 arch")
+![chain33 arch](https://public.33.cn/web/storage/upload/20181114/263b976261a440e456fcebe0a2bb7c04.png "chain33 arch")
 
 如上图左上部分所示，Chain33提供的DApp Framework中包含了三个元素：执行器、命令行和RPC，其中执行器就是DApp的合约逻辑；
 

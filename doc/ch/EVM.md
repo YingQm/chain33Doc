@@ -1,4 +1,4 @@
-## 1 EVM 接口
+## 1 EVM 老接口
 [TOC]
 
 ### 1.1 创建EVM合约交易 CreateTransaction CreateCall
@@ -452,3 +452,354 @@ payload携带的内容格式如下：
 |----|----|----|
 |debugStatus|bool|当前调试开关状态|
 
+## 2 EVM 新接口
+### 2.1 创建未签名的部署合约交易 CreateDeployTx
+**请求报文<!--[dapp/evm/types/EvmContractCreateReq]-->：**
+```json
+{
+    "jsonrpc":"2.0",
+    "id": int32,
+    "method":"evm.CreateDeployTx",
+    "params":[
+		{
+			"code":"string",
+			"abi":"string",
+			"fee":int64,
+			"note": "string",
+			"alias": "string",
+			"parameter": "string",
+			"expire":"string",
+			"paraName":"string",
+			"amount":int64
+		}
+	]
+}
+```
+
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|----|
+|parameter|string|是|部署合约的参数 "constructor(zbc, zbc, 3300, '${evm_creatorAddr}')" 原型为 constructor (string memory name_, string memory symbol_,uint256 supply, address owner),这里表示部署一个名称和symbol都为 zbc，总金额3300*le8，拥有者为 evm_creatorAddr 的ERC20合约|
+|abi|string|是|部署合约的 abi 内容|
+|code|string|是|需要部署合约的 bin 内容|
+|fee|int64|是|手续费必须大于等于100000000|
+|paraName|string|是|如果是平行链参数 paraName 的值为 user.p.para. 如果是主链则为空|
+|alias|string|是|合约别名|
+
+**响应报文：**
+```json
+{
+    "id":int32,
+    "result":{
+        "data":"string",
+    },
+    "error":null
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|data|string|创建的交易数据|
+
+### 2.2 获取合约地址 CalcNewContractAddr
+**请求报文<!--[dapp/evm/types/EvmContractCreateReq]-->：**
+```json
+{
+    "jsonrpc":"2.0",
+    "id": int32,
+    "method":"evm.CalcNewContractAddr",
+    "params":[
+		{
+			"caller":"string",
+			"txhash":"string"
+		}
+	]
+}
+```
+
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|----|
+|caller|string|是|部署合约的地址|
+|txhash|string|是|创建合约的交易哈希，去掉前面的 0x|
+
+**响应报文：**
+```json
+{
+    "id":int32,
+    "result":"string",
+    "error":null
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|result|string|合约地址|
+
+### 2.3 查询合约地址是否存在 CheckAddrExists
+**请求报文<!--[dapp/evm/types/CheckEVMAddrReq]-->：**
+```json
+{
+    "jsonrpc":"2.0",
+    "id": int32,
+    "method":"Chain33.Query",
+    "params":[
+		{
+			"execer":"evm",
+			"funcName":"CheckAddrExists",
+			"payload":{
+				"addr": "string"
+			}
+		}
+	]
+}
+```
+
+**参数说明：**
+
+Chain33.Query结构按通用要求填写：
+execer,执行器名称，这里固定为evm，如果是在平行链上则需要加上前缀，比如user.p.game.evm
+funcName,操作名称，这里固定为 CheckAddrExists
+payload携带的内容格式如下：
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|----|
+|addr|string|是|被查询的合约地址|
+
+**响应报文<!--[dapp/evm/types/CheckEVMAddrResp]-->：**
+```json
+{
+    "id":int32,
+    "result": {
+		"contract":bool,
+		"contractAddr":"string",
+		"contractName":"string",
+		"aliasName":"string"
+	},
+    "error":null
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|contract|bool|合约地址是否存在, 1 为存在, 0 为不存在|
+|contractAddr|string|合约地址|
+|contractName|string|合约名称|
+|aliasName|string|合约别名|
+
+### 2.4 查询合约信息 GetPackData Query GetUnpackData
+#### 2.4.1 GetPackData
+**请求报文<!--[dapp/evm/types/EvmGetPackDataReq]-->：**
+```json
+{
+    "jsonrpc":"2.0",
+    "id": int32,
+    "method":"Chain33.Query",
+    "params":[
+		{
+			"execer":"evm",
+			"funcName":"GetPackData",
+			"payload":{
+				"abi":"string",
+				"parameter":"string"
+			}
+		}
+	]
+}
+```
+
+**参数说明：**
+
+Chain33.Query结构按通用要求填写：
+execer,执行器名称，这里固定为evm，如果是在平行链上则需要加上前缀，比如user.p.game.evm
+funcName,操作名称，这里固定为 GetPackData
+payload携带的内容格式如下：
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|----|
+|abi|string|是|合约abi|
+|parameter|string|是|查询的参数信息|
+
+**响应报文<!--[dapp/evm/types/EvmGetPackDataRespose]-->：**
+```json
+{
+    "id":int32,
+    "result": {
+		"packData":"string",
+	},
+    "error":null
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|packData|string|需要查询的信息 pack 后的数据|
+
+#### 2.4.2 Query
+**请求报文<!--[dapp/evm/types/EvmQueryReq]-->：**
+```json
+{
+    "jsonrpc":"2.0",
+    "id": int32,
+    "method":"Chain33.Query",
+    "params":[
+		{
+			"execer":"evm",
+			"funcName":"Query",
+			"payload":{
+				"address":"string",
+				"input":"string",
+				"caller":"string"
+			}
+		}
+	]
+}
+```
+
+**参数说明：**
+
+Chain33.Query结构按通用要求填写：
+execer,执行器名称，这里固定为evm，如果是在平行链上则需要加上前缀，比如user.p.game.evm
+funcName,操作名称，这里固定为 Query
+payload携带的内容格式如下：
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|----|
+|address|string|是|合约地址|
+|input|string|是|需要查询的信息 pack 后的数据|
+|caller|string|是|合约部署者地址|
+
+**响应报文<!--[dapp/evm/types/EvmQueryResp]-->：**
+```json
+{
+    "id":int32,
+    "result": {
+		"address":"string",
+		"input":"string",
+		"caller":"string",
+		"rawData":"string",
+		"jsonData":"string",
+	},
+    "error":null
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|address|string|合约地址|
+|input|string|需要查询的信息 pack 后的数据|
+|caller|string|合约部署者地址|
+|rawData|string|查询到的结果|
+|jsonData|string|json数据|
+
+#### 2.4.3 GetUnpackData
+**请求报文<!--[dapp/evm/types/EvmGetUnpackDataReq]-->：**
+```json
+{
+    "jsonrpc":"2.0",
+    "id": int32,
+    "method":"Chain33.Query",
+    "params":[
+		{
+			"execer":"evm",
+			"funcName":"GetUnpackData",
+			"payload":{
+				"abi":"string",
+				"parameter":"string",
+				"data":"string"
+			}
+		}
+	]
+}
+```
+
+**参数说明：**
+
+Chain33.Query结构按通用要求填写：
+execer,执行器名称，这里固定为evm，如果是在平行链上则需要加上前缀，比如user.p.game.evm
+funcName,操作名称，这里固定为 GetUnpackData
+payload携带的内容格式如下：
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|
+|abi|string|是|合约abi|
+|parameter|string|是|查询的参数信息|
+|data|string|是|需要 Unpack 的数据|
+
+**响应报文<!--[dapp/evm/types/EvmGetUnpackDataRespose]-->：**
+```json
+{
+    "id":int32,
+    "result": {
+		"unpackData":"[]string"
+	},
+    "error":null
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|unpackData|string|Unpack 的数据|
+
+### 2.5 创建操作合约交易 CreateCallTx
+**请求报文<!--[dapp/evm/types/EvmContractCallReq]-->：**
+```json
+{
+    "jsonrpc":"2.0",
+    "id": int32,
+    "method":"evm.CreateCallTx",
+    "params":[
+		{
+			"abi":"string",
+			"fee":int64,
+			"note": "string",
+			"parameter": "string",
+			"expire":"string",
+			"paraName":"string",
+			"contractAddr":"string",
+			"amount":int64
+		}
+	]
+}
+```
+
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|----|
+|parameter|string|是|操作合约的参数，例如转账交易 "transfer('${evm_transferAddr}', 20)"|
+|abi|string|是|部署合约的 abi 内容|
+|contractAddr|string|是|合约地址|
+|fee|int64|是|手续费必须大于等于100000000|
+|paraName|string|是|如果是平行链参数 paraName 的值为 user.p.para. 如果是主链则为空|
+
+**响应报文：**
+```json
+{
+    "id":int32,
+    "result":{
+        "data":"string",
+    },
+    "error":null
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|data|string|创建的交易数据|

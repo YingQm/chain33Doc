@@ -4,19 +4,19 @@
 ## 1 Module Introduction
 Wallet module mainly provides two major services for wallet app. One is the account management of blockchain, including the creation of accounts and the management of public and private key and address information. Wallet clients can create and manage accounts, export and import private keys through these service interfaces. The other is the signing and sending of transactions for bty transfers and the sending of smart contract transactions.
 
-![wallet1](https://public.zhaobi.tech/web/storage/upload/20181114/79425db083b9e5240944408e896d5ed7.png)
+![wallet1](https://public.33.cn/web/storage/upload/20181114/79425db083b9e5240944408e896d5ed7.png)
 
 ## 2 Wallet Module Structure
 ### 2.1 Account
 #### 2.1.1 BIP44 Wallet Structure
 Chain33 wallet module is defined using BIP44 and manages multiple currencies through a set of seed, which supports Chinese and English characters. Meanwhile, the user sets a password to the wallet to encrypt seed information, which is specified and saved by the user.
 
-![wallet2](https://public.zhaobi.tech/web/storage/upload/20181112/811613f85039c688862f160f4efb3f40.png "wallet2")
+![wallet2](https://public.33.cn/web/storage/upload/20181112/811613f85039c688862f160f4efb3f40.png "wallet2")
 
 #### 2.1.2 Private Key, Address, Public Key Information Management
 Wallet module should have an AccountDB to store account information created by the user, including private keys, addresses, public keys, and so on. The configuration information for AccountDB is available in the chain33 configuration file. The primary three tables stored in AccountDB are as follows:
 
-![wallet3](https://public.zhaobi.tech/web/storage/upload/20181112/21091cb09ca180aae9b7c860361a7b2a.png "wallet3")
+![wallet3](https://public.33.cn/web/storage/upload/20181112/21091cb09ca180aae9b7c860361a7b2a.png "wallet3")
 
 The AccountTable, with timestamp and Account address as key, is mainly used to list output of all Account accounts
 AddressTable takes account address as key, which is mainly used to query account information through address address

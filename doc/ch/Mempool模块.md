@@ -10,12 +10,13 @@
 在mempool中会对接收的交易做初步合法性的校验，过滤掉一些非法的交易。
 对交易发送者做流量限制，防止同一地址发送太过频繁。同时,mempool会与其他模块会有消息交互，后面会一一介绍。
 
+Github文件位置：chain33/system/mempool/
 
 ##  2. 逻辑架构及上下文
 
 > 下图就是各模块与mempool的消息交互图
 
-![mempool 模块交互逻辑图](https://public.zhaobi.tech/web/storage/upload/20190717/e50d3f6d985e4e5ffcc390190f4d6ead.png)
+![mempool 模块交互逻辑图](https://public.33.cn/web/storage/upload/20190717/e50d3f6d985e4e5ffcc390190f4d6ead.png)
 
 > mempool与 blockchain的交互:
 
