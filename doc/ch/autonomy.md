@@ -1,6 +1,8 @@
-## 自治系统参数默认值以及范围
-### 可修改参数：
-``` 
+# autonomy 接口
+[TOC]
+## 1 自治系统参数默认值以及范围
+### 1.1 可修改参数：
+```
     // 默认公示周期,以区块高度计算,换算成时间大概一周
     publicPeriod         int32 = 17280 * 7  
     // 最小公示周期
@@ -35,23 +37,31 @@
 	minPubOpposeRatio   int32 = 33
 	// 最大全体持票人否决率
 	maxPubOpposeRatio   int32 = 50
+	
+	// 可以调整，但是可能需要进行范围的限制：参与率最低设置为 50%， 最高设置为 80%，赞成率，最低 50.1%，最高80%
+	// 不能设置太低和太高，太低就容易作弊，太高则有可能很难达到
+	// 最小全体持票人参与率
+	minPubAttendRatio = 50
+	// 最大全体持票人参与率
+	maxPubAttendRatio = 80
+
+	// 最小全体持票人赞成率
+	minPubApproveRatio = 50
+	// 最大全体持票人赞成率
+	maxPubApproveRatio = 80
 ```
-### 不可修改参数：
-``` 
+### 1.2 不可修改参数：
+```
     // 董事会成员数范围
     minBoards                 = 20
-	maxBoards                 = 40
-	// 全体持票人参与率，以%计
-	pubAttendRatio      int32 = 75                      
-	// 全体持票人赞成率，以%计
-	pubApproveRatio     int32 = 66                     
+	maxBoards                 = 40                  
 ```
 
-## 1、提案董事会成员
-### (1)、proposal board
+## 1 提案董事会成员
+### 1.1 proposal board
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -67,46 +77,45 @@
                 "boards" : ["14KEKbYtKKQm4wMthSK9J4La4nAiidGozt", "1EbDHAXpoiewjPLX9uqoz38HsKqMXayZrF", "1KcCVZLSQYRUwE5EXTsAoQs9LuJW6xwfQa"],
                 "startBlockHeight" : 100,
                 "endBlockHeight" : 1000,
-                "realEndBlockHeight" : 0,
+                "realEndBlockHeight" : 0
             }
-        }
-    
+        }    
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-year|int32|否|提案年
-month|int32|否|提案月
-day|int32|否|提案日
-update|bool|否|替换或者更新boards；替换(false); 更新(true)
-boards|[]string|是|提案董事会成员
-startBlockHeight|int64|是|开始投票高度
-endBlockHeight|int64|是|结束投票高度
-realEndBlockHeight|int64|否|实际投票结束高度，不需要填写
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|year|int32|否|提案年|
+|month|int32|否|提案月|
+|day|int32|否|提案日|
+|update|bool|否|替换或者更新boards；替换(false); 更新(true)|
+|boards|[]string|是|提案董事会成员|
+|startBlockHeight|int64|是|开始投票高度|
+|endBlockHeight|int64|是|结束投票高度|
+|realEndBlockHeight|int64|否|实际投票结束高度，不需要填写|
 
 * endBlockHeight > startBlockHeight + 720 (自治系统中所有涉及提案都需要满足)
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (2)、revoke proposal board
+### 1.2 revoke proposal board
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -121,30 +130,30 @@ result|string|交易十六进制编码后的字符串
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-proposalID|string|是|提案ID，即PropBoard的交易hash
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|proposalID|string|是|提案ID，即PropBoard的交易hash|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (3)、vote proposal board
+### 1.3 vote proposal board
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -161,32 +170,32 @@ result|string|交易十六进制编码后的字符串
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-proposalID|string|是|提案ID，即PropBoard的交易hash
-approve|bool|是|是否同意该提案，true：同意；false: 不同意
-originAddr|[]string|否|如果有绑定挖矿的可以将挖矿地址填入进行投票
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|proposalID|string|是|提案ID，即PropBoard的交易hash|
+|approve|bool|是|是否同意该提案，true：同意；false: 不同意|
+|originAddr|[]string|否|如果有绑定挖矿的可以将挖矿地址填入进行投票|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (4)、terminate proposal board
+### 1.4 terminate proposal board
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -201,32 +210,30 @@ result|string|交易十六进制编码后的字符串
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-proposalID|string|是|提案ID，即PropBoard的交易hash
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|proposalID|string|是|提案ID，即PropBoard的交易hash|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (5) query proposal board
-
-a、通过proposalID查询提案
-
- 请求报文：
-```
+### 1.5 query proposal board
+#### 1.5.1 通过proposalID查询提案
+**请求报文：**
+```json
 {
     "method": "Chain33.Query",
     "params": [
@@ -240,16 +247,16 @@ a、通过proposalID查询提案
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-data|string|是|提案ID，即PropBoard的交易hash
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|data|string|是|提案ID，即PropBoard的交易hash|
 
-b、通过状态或者地址以及状态地址查询提案
+#### 1.5.2 通过状态或者地址以及状态地址查询提案
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "method": "Chain33.Query",
     "params": [
@@ -268,10 +275,10 @@ b、通过状态或者地址以及状态地址查询提案
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
+|参数|类型|是否必须|说明|
+|----|----|----|----|
 status|int32|是|提案状态
 addr|string|否|提案地址
 count|int32|是|查询数量
@@ -281,11 +288,11 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 
 * status 1-提案状态 2-提案撤销状态 3-投票状态 4-提案结束状态
 
-a, b的响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": {
+    "id": int32,
+    "result": {
       "propBoards" : [
         {
             "propBoard": {
@@ -322,38 +329,38 @@ a, b的响应报文：
             "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
         }
       ]
-  }
-  "error": null
+    },
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-propBoard|json|参见(1)
-curRule.boardApproveRatio|int32|董事会赞成率
-curRule.pubOpposeRatio|int32|全体持票人否决率
-curRule.proposalAmount|int64|提案金
-curRule.largeProjectAmount|int64|重大项目阈值
-curRule.publicPeriod|int32|公示期
-board.boards|[]string|有投票权的boards
-board.revboards|[]string|无投票权的boards
-board.amount|int64|该boards在当前周期已经审批的项目金
-board.startHeight|int64|当前周期的起始区块高度
-voteResult.totalVotes|int32|总票数
-voteResult.approveVotes|int32|赞成票
-voteResult.opposeVotes|int32|反对票
-voteResult.pass|bool|是否通过，true-通过 false-未通过
-status|int32|提案状态
-address|string|提案地址
-height|int64|提案高度
-index|int32|提案index
-proposalID|string|提案ID
+|参数|类型|说明|
+|----|----|----|----|
+|propBoard|json|参见(1)|
+|curRule.boardApproveRatio|int32|董事会赞成率|
+|curRule.pubOpposeRatio|int32|全体持票人否决率|
+|curRule.proposalAmount|int64|提案金|
+|curRule.largeProjectAmount|int64|重大项目阈值|
+|curRule.publicPeriod|int32|公示期|
+|board.boards|[]string|有投票权的boards|
+|board.revboards|[]string|无投票权的boards|
+|board.amount|int64|该boards在当前周期已经审批的项目金|
+|board.startHeight|int64|当前周期的起始区块高度|
+|voteResult.totalVotes|int32|总票数|
+|voteResult.approveVotes|int32|赞成票|
+|voteResult.opposeVotes|int32|反对票|
+|voteResult.pass|bool|是否通过，true-通过 false-未通过|
+|status|int32|提案状态|
+|address|string|提案地址|
+|height|int64|提案高度|
+|index|int32|提案index|
+|proposalID|string|提案ID|
 
-### (6) query active board
+### 1.6 query active board
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "method": "Chain33.Query",
     "params": [
@@ -363,44 +370,43 @@ proposalID|string|提案ID
             "payload": {
                 "data" : "1"
             }
-        }
-    
+        }    
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-data|string|是|"1"
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|data|string|是|"1"|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": {
-      "boards" : ["12cjnN5D4DPdBQSwh6vjwJbtsW4EJALTMv","1Luh4AziYyaC5zP3hUXtXFZS873xAxm6rH"],
-      "revboards" : ["1NNaYHkscJaLJ2wUrFNeh6cQXBS4TrFYeB"],
-      "amount" : 10000000,
-      "startHeight" : 100
-  }
-  "error": null
+    "id": int32,
+    "result": {
+        "boards" : ["12cjnN5D4DPdBQSwh6vjwJbtsW4EJALTMv","1Luh4AziYyaC5zP3hUXtXFZS873xAxm6rH"],
+        "revboards" : ["1NNaYHkscJaLJ2wUrFNeh6cQXBS4TrFYeB"],
+        "amount" : 10000000,
+        "startHeight" : 100
+    },
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-boards|[]string|有投票权的boards
-revboards|[]string|无投票权的boards
-amount|int64|该boards在当前周期已经审批的项目金
-startHeight|int64|当前周期的起始区块高度
+|参数|类型|说明|
+|----|----|----|----|
+|boards|[]string|有投票权的boards|
+|revboards|[]string|无投票权的boards|
+|amount|int64|该boards在当前周期已经审批的项目金|
+|startHeight|int64|当前周期的起始区块高度|
 
-## 2、提案项目
-### (1)、proposal project
+## 2 提案项目
+### 2.1 proposal project
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -425,51 +431,50 @@ startHeight|int64|当前周期的起始区块高度
                 "realEndBlockHeight" : 0,
                 "projectNeedBlockNum" : 100000
             }
-        }
-    
+        }    
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-year|int32|否|提案年
-month|int32|否|提案月
-day|int32|否|提案日
-firstStage|string|否|第一阶段提案项目hash
-lastStage|string|否|上一阶段提案项目hash
-production|string|否|项目地址
-description|string|否|项目阶段性简述
-contractor|string|否|承包人
-amount|int64|是|项目经费
-amountDetail|string|否|经费细则
-toAddr|string|是|收款地址
-startBlockHeight|int64|是|开始投票高度
-endBlockHeight|int64|是|结束投票高度
-realEndBlockHeight|int64|否|实际投票结束高度，不需要填写
-projectNeedBlockNum|int64|否|项目耗时预估（以区块计算）。
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|year|int32|否|提案年|
+|month|int32|否|提案月|
+|day|int32|否|提案日|
+|firstStage|string|否|第一阶段提案项目hash|
+|lastStage|string|否|上一阶段提案项目hash|
+|production|string|否|项目地址|
+|description|string|否|项目阶段性简述|
+|contractor|string|否|承包人|
+|amount|int64|是|项目经费|
+|amountDetail|string|否|经费细则|
+|toAddr|string|是|收款地址|
+|startBlockHeight|int64|是|开始投票高度|
+|endBlockHeight|int64|是|结束投票高度|
+|realEndBlockHeight|int64|否|实际投票结束高度，不需要填写|
+|projectNeedBlockNum|int64|否|项目耗时预估（以区块计算）|
 
 * endBlockHeight > startBlockHeight + 720 (自治系统中所有涉及提案都需要满足)
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (2)、revoke proposal project
+### 2.2 revoke proposal project
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -484,30 +489,30 @@ result|string|交易十六进制编码后的字符串
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-proposalID|string|是|提案ID，即PropProject的交易hash
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|proposalID|string|是|提案ID，即PropProject的交易hash|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (3)、vote proposal project
+### 2.3 vote proposal project
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -523,31 +528,31 @@ result|string|交易十六进制编码后的字符串
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-proposalID|string|是|提案ID，即PropProject的交易hash
-approve|bool|是|是否同意该提案，true：同意；false: 不同意
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|proposalID|string|是|提案ID，即PropProject的交易hash|
+|approve|bool|是|是否同意该提案，true：同意；false: 不同意|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (4)、pub vote proposal project
+### 2.4 pub vote proposal project
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -564,32 +569,32 @@ result|string|交易十六进制编码后的字符串
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-proposalID|string|是|提案ID，即PropProject的交易hash
-oppose|bool|是|是否反对该提案，true：反对；false: 不反对
-originAddr|[]string|否|如果有绑定挖矿的可以将挖矿地址填入进行投票
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|proposalID|string|是|提案ID，即PropProject的交易hash|
+|oppose|bool|是|是否反对该提案，true：反对；false: 不反对|
+|originAddr|[]string|否|如果有绑定挖矿的可以将挖矿地址填入进行投票|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (5)、terminate proposal project
+### 2.5 terminate proposal project
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -604,32 +609,32 @@ result|string|交易十六进制编码后的字符串
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-proposalID|string|是|提案ID，即PropProject的交易hash
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|proposalID|string|是|提案ID，即PropProject的交易hash|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (5) query proposal project
+### 2.5 query proposal project
 
-a、通过proposalID查询提案
+#### 2.5.1 通过proposalID查询提案
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "method": "Chain33.Query",
     "params": [
@@ -643,16 +648,16 @@ a、通过proposalID查询提案
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
+|参数|类型|是否必须|说明|
+|----|----|----|----|
 data|string|是|提案ID，即PropProject的交易hash
 
-b、通过状态或者地址以及状态地址查询提案
+#### 2.5.2 通过状态或者地址以及状态地址查询提案
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "method": "Chain33.Query",
     "params": [
@@ -671,21 +676,21 @@ b、通过状态或者地址以及状态地址查询提案
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-status|int32|是|提案状态
-addr|string|否|提案地址
-count|int32|是|查询数量
-direction|int32|是|查询方向，0降序 1升序
-height|int64|否|查询量大翻页查询时候需要输入从某个高度开始
-index|int32|否|查询量大翻页查询时候需要输入从某个index开始
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|status|int32|是|提案状态|
+|addr|string|否|提案地址|
+|count|int32|是|查询数量|
+|direction|int32|是|查询方向，0降序 1升序|
+|height|int64|否|查询量大翻页查询时候需要输入从某个高度开始|
+|index|int32|否|查询量大翻页查询时候需要输入从某个index开始|
 
 * status 1-提案状态 2-提案撤销状态 3-董事会投票状态 4-全体持票人投票状态 5-提案结束状态
 
-a, b的响应报文：
-```
+**响应报文：**
+```json
 {
   "id": int32,
   "result": {
@@ -726,40 +731,40 @@ a, b的响应报文：
             "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
         }
       ]
-  }
+  },
   "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-propProject|json|参见(1)
-curRule.boardApproveRatio|int32|董事会赞成率
-curRule.pubOpposeRatio|int32|全体持票人否决率
-curRule.proposalAmount|int64|提案金
-curRule.largeProjectAmount|int64|重大项目阈值
-curRule.publicPeriod|int32|公示期
-boards|[]string|投票该提案的董事会成员
-boardVoteRes.totalVotes|int32|总票数
-boardVoteRes.approveVotes|int32|赞成票
-boardVoteRes.opposeVotes|int32|反对票
-boardVoteRes.pass|bool|是否通过，true-通过 false-未通过
-pubVote.publicity|int32|全体持票数
-pubVote.totalVotes|int32|赞成票
-pubVote.opposeVotes|int32|反对票，反对票率决定是否通过
-pubVote.pubPass|bool|最总是否通过，true-通过 false-未通过
-status|int32|提案状态
-address|string|提案地址
-height|int64|提案高度
-index|int32|提案index
-proposalID|string|提案ID
+|参数|类型|说明|
+|----|----|----|----|
+|propProject|json|参见(1)|
+|curRule.boardApproveRatio|int32|董事会赞成率|
+|curRule.pubOpposeRatio|int32|全体持票人否决率|
+|curRule.proposalAmount|int64|提案金|
+|curRule.largeProjectAmount|int64|重大项目阈值|
+|curRule.publicPeriod|int32|公示期|
+|boards|[]string|投票该提案的董事会成员|
+|boardVoteRes.totalVotes|int32|总票数|
+|boardVoteRes.approveVotes|int32|赞成票|
+|boardVoteRes.opposeVotes|int32|反对票|
+|boardVoteRes.pass|bool|是否通过，true-通过 false-未通过|
+|pubVote.publicity|int32|全体持票数|
+|pubVote.totalVotes|int32|赞成票|
+|pubVote.opposeVotes|int32|反对票，反对票率决定是否通过|
+|pubVote.pubPass|bool|最总是否通过，true-通过 false-未通过|
+|status|int32|提案状态|
+|address|string|提案地址|
+|height|int64|提案高度|
+|index|int32|提案index|
+|proposalID|string|提案ID|
 
-## 3、提案系统参数修改
-### (1)、proposal rule
+## 3 提案系统参数修改
+### 3.1 proposal rule
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -782,47 +787,46 @@ proposalID|string|提案ID
                 "endBlockHeight" : 1000,
                 "realEndBlockHeight" : 0
             }
-        }
-    
+        }    
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-year|int32|否|提案年
-month|int32|否|提案月
-day|int32|否|提案日
-ruleCfg.boardApproveRatio|int32|否|董事会赞成率
-ruleCfg.pubOpposeRatio|int32|否|全体持票人否决率
-ruleCfg.proposalAmount|int64|否|提案金
-ruleCfg.largeProjectAmount|int64|否|重大项目阈值
-ruleCfg.publicPeriod|int32|否|公示期
-startBlockHeight|int64|是|开始投票高度
-endBlockHeight|int64|是|结束投票高度
-realEndBlockHeight|int64|否|实际投票高度，不需要填写
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|year|int32|否|提案年|
+|month|int32|否|提案月|
+|day|int32|否|提案日|
+|ruleCfg.boardApproveRatio|int32|否|董事会赞成率|
+|ruleCfg.pubOpposeRatio|int32|否|全体持票人否决率|
+|ruleCfg.proposalAmount|int64|否|提案金|
+|ruleCfg.largeProjectAmount|int64|否|重大项目阈值|
+|ruleCfg.publicPeriod|int32|否|公示期|
+|startBlockHeight|int64|是|开始投票高度|
+|endBlockHeight|int64|是|结束投票高度|
+|realEndBlockHeight|int64|否|实际投票高度，不需要填写|
 
 * endBlockHeight > startBlockHeight + 720 (自治系统中所有涉及提案都需要满足)
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (2)、revoke proposal rule
+### 3.2 revoke proposal rule
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -837,30 +841,30 @@ result|string|交易十六进制编码后的字符串
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-proposalID|string|是|提案ID，即PropRule的交易hash
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|proposalID|string|是|提案ID，即PropRule的交易hash|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (3)、vote proposal rule
+### 3.3 vote proposal rule
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -877,32 +881,32 @@ result|string|交易十六进制编码后的字符串
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-proposalID|string|是|提案ID，即PropRule的交易hash
-approve|bool|是|是否同意该提案，true：同意；false: 不同意
-originAddr|[]string|否|如果有绑定挖矿的可以将挖矿地址填入进行投票
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|proposalID|string|是|提案ID，即PropRule的交易hash|
+|approve|bool|是|是否同意该提案，true：同意；false: 不同意|
+|originAddr|[]string|否|如果有绑定挖矿的可以将挖矿地址填入进行投票|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (4)、terminate proposal rule
+### 3.4 terminate proposal rule
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -917,32 +921,32 @@ result|string|交易十六进制编码后的字符串
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-proposalID|string|是|提案ID，即PropRule的交易hash
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|proposalID|string|是|提案ID，即PropRule的交易hash|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (5) query proposal rule
+### 3.5 query proposal rule
 
-a、通过proposalID查询提案
+#### 3.5.1 通过proposalID查询提案
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "method": "Chain33.Query",
     "params": [
@@ -956,16 +960,16 @@ a、通过proposalID查询提案
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-data|string|是|提案ID，即PropRule的交易hash
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|data|string|是|提案ID，即PropRule的交易hash|
 
-b、通过状态或者地址以及状态地址查询提案
+#### 3.5.2 通过状态或者地址以及状态地址查询提案
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "method": "Chain33.Query",
     "params": [
@@ -984,21 +988,21 @@ b、通过状态或者地址以及状态地址查询提案
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-status|int32|是|提案状态
-addr|string|否|提案地址
-count|int32|是|查询数量
-direction|int32|是|查询方向，0降序 1升序
-height|int64|否|查询量大翻页查询时候需要输入从某个高度开始
-index|int32|否|查询量大翻页查询时候需要输入从某个index开始
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|status|int32|是|提案状态|
+|addr|string|否|提案地址|
+|count|int32|是|查询数量|
+|direction|int32|是|查询方向，0降序 1升序|
+|height|int64|否|查询量大翻页查询时候需要输入从某个高度开始|
+|index|int32|否|查询量大翻页查询时候需要输入从某个index开始|
 
 * status 1-提案状态 2-提案撤销状态 3-投票状态 4-提案结束状态
 
-a, b的响应报文：
-```
+**响应报文：**
+```json
 {
   "id": int32,
   "result": {
@@ -1043,26 +1047,26 @@ a, b的响应报文：
   "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-propRule|json|参见(1)
-curRule|json|参见(1)
-voteResult.totalVotes|int32|总票数
-voteResult.approveVotes|int32|赞成票
-voteResult.opposeVotes|int32|反对票
-voteResult.pass|bool|是否通过，true-通过 false-未通过
-status|int32|提案状态
-address|string|提案地址
-height|int64|提案高度
-index|int32|提案index
-proposalID|string|提案ID
+|参数|类型|说明|
+|----|----|----|----|
+|propRule|json|参见(1)|
+|curRule|json|参见(1)|
+|voteResult.totalVotes|int32|总票数|
+|voteResult.approveVotes|int32|赞成票|
+|voteResult.opposeVotes|int32|反对票|
+|voteResult.pass|bool|是否通过，true-通过 false-未通过|
+|status|int32|提案状态|
+|address|string|提案地址|
+|height|int64|提案高度|
+|index|int32|提案index|
+|proposalID|string|提案ID|
 
-### (6) query active rule
+### 3.6 query active rule
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "method": "Chain33.Query",
     "params": [
@@ -1076,14 +1080,14 @@ proposalID|string|提案ID
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-data|string|是|"1"
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|data|string|是|"1"|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
   "id": int32,
   "result": {
@@ -1096,21 +1100,21 @@ data|string|是|"1"
   "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-boardApproveRatio|int32|董事会赞成率
-pubOpposeRatio|int32|全体持票人否决率
-proposalAmount|int64|提案金
-largeProjectAmount|int64|重大项目阈值
-publicPeriod|int32|公示期
+|参数|类型|说明|
+|----|----|----|----|
+|boardApproveRatio|int32|董事会赞成率|
+|pubOpposeRatio|int32|全体持票人否决率|
+|proposalAmount|int64|提案金|
+|largeProjectAmount|int64|重大项目阈值|
+|publicPeriod|int32|公示期|
 
-## 4、提案董事会成员修改
-### (1)、proposal change
+## 4 提案董事会成员修改
+### 4.1 proposal change
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -1138,46 +1142,45 @@ publicPeriod|int32|公示期
                 ],
                 "startBlockHeight" : 100,
                 "endBlockHeight" : 1000,
-                "realEndBlockHeight" : 0,
+                "realEndBlockHeight" : 0
             }
-        }
-    
+        }    
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-year|int32|否|提案年
-month|int32|否|提案月
-day|int32|否|提案日
-changes.cancel|bool|是|撤销或者添加董事会，true-撤销，false-添加
-changes.addr|string|是|撤销或者添加董事会的地址
-startBlockHeight|int64|是|开始投票高度
-endBlockHeight|int64|是|结束投票高度
-realEndBlockHeight|int64|否|实际投票结束高度，不需要填写
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|year|int32|否|提案年|
+|month|int32|否|提案月|
+|day|int32|否|提案日|
+|changes.cancel|bool|是|撤销或者添加董事会，true-撤销，false-添加|
+|changes.addr|string|是|撤销或者添加董事会的地址|
+|startBlockHeight|int64|是|开始投票高度|
+|endBlockHeight|int64|是|结束投票高度|
+|realEndBlockHeight|int64|否|实际投票结束高度，不需要填写|
 
 * endBlockHeight > startBlockHeight + 720 (自治系统中所有涉及提案都需要满足)
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (2)、revoke proposal change
+### 4.2 revoke proposal change
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -1192,30 +1195,30 @@ result|string|交易十六进制编码后的字符串
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-proposalID|string|是|提案ID，即PropChange的交易hash
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|proposalID|string|是|提案ID，即PropChange的交易hash|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (3)、vote proposal change
+### 4.3 vote proposal change
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -1225,37 +1228,37 @@ result|string|交易十六进制编码后的字符串
             "actionName": "VotePropChange",
             "payload": {
                 "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd",
-                "approve": true,
+                "approve": true
             }
         }
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-proposalID|string|是|提案ID，即PropChange的交易hash
-approve|bool|是|是否同意该提案，true：同意；false: 不同意
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|proposalID|string|是|提案ID，即PropChange的交易hash|
+|approve|bool|是|是否同意该提案，true：同意；false: 不同意|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (4)、terminate proposal change
+### 4.4 terminate proposal change
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -1270,32 +1273,32 @@ result|string|交易十六进制编码后的字符串
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-proposalID|string|是|提案ID，即PropChange的交易hash
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|proposalID|string|是|提案ID，即PropChange的交易hash|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (5) query proposal change
+### 4.5 query proposal change
 
-a、通过proposalID查询提案
+#### 4.5.1 通过proposalID查询提案
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "method": "Chain33.Query",
     "params": [
@@ -1309,16 +1312,16 @@ a、通过proposalID查询提案
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-data|string|是|提案ID，即PropChange的交易hash
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|data|string|是|提案ID，即PropChange的交易hash|
 
-b、通过状态或者地址以及状态地址查询提案
+#### 4.5.2 通过状态或者地址以及状态地址查询提案
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "method": "Chain33.Query",
     "params": [
@@ -1337,21 +1340,21 @@ b、通过状态或者地址以及状态地址查询提案
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-status|int32|是|提案状态
-addr|string|否|提案地址
-count|int32|是|查询数量
-direction|int32|是|查询方向，0降序 1升序
-height|int64|否|查询量大翻页查询时候需要输入从某个高度开始
-index|int32|否|查询量大翻页查询时候需要输入从某个index开始
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|status|int32|是|提案状态|
+|addr|string|否|提案地址|
+|count|int32|是|查询数量|
+|direction|int32|是|查询方向，0降序 1升序|
+|height|int64|否|查询量大翻页查询时候需要输入从某个高度开始|
+|index|int32|否|查询量大翻页查询时候需要输入从某个index开始|
 
 * status 1-提案状态 2-提案撤销状态 3-投票状态 4-提案结束状态
 
-a, b的响应报文：
-```
+**响应报文：**
+```json
 {
   "id": int32,
   "result": {
@@ -1377,7 +1380,7 @@ a, b的响应报文：
                 ],
                 "startBlockHeight" : 100,
                 "endBlockHeight" : 1000,
-                "realEndBlockHeight" : 900,
+                "realEndBlockHeight" : 900
             },
             "curRule": {
                 "changeApproveRatio" : 66,
@@ -1405,39 +1408,39 @@ a, b的响应报文：
             "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
         }
       ]
-  }
-  "error": null
+    },
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-propChange|json|参见(1)
-curRule.changeApproveRatio|int32|董事会赞成率
-curRule.pubOpposeRatio|int32|全体持票人否决率
-curRule.proposalAmount|int64|提案金
-curRule.largeProjectAmount|int64|重大项目阈值
-curRule.publicPeriod|int32|公示期
-board.boards|[]string|有投票权的boards
-board.revboards|[]string|无投票权的boards
-board.amount|int64|该boards在当前周期已经审批的项目金
-board.startHeight|int64|当前周期的起始区块高度
-voteResult.totalVotes|int32|总票数
-voteResult.approveVotes|int32|赞成票
-voteResult.opposeVotes|int32|反对票
-voteResult.pass|bool|是否通过，true-通过 false-未通过
-status|int32|提案状态
-address|string|提案地址
-height|int64|提案高度
-index|int32|提案index
-proposalID|string|提案ID
+|参数|类型|说明|
+|----|----|----|----|
+|propChange|json|参见(1)|
+|curRule.changeApproveRatio|int32|董事会赞成率|
+|curRule.pubOpposeRatio|int32|全体持票人否决率|
+|curRule.proposalAmount|int64|提案金|
+|curRule.largeProjectAmount|int64|重大项目阈值|
+|curRule.publicPeriod|int32|公示期|
+|board.boards|[]string|有投票权的boards|
+|board.revboards|[]string|无投票权的boards|
+|board.amount|int64|该boards在当前周期已经审批的项目金|
+|board.startHeight|int64|当前周期的起始区块高度|
+|voteResult.totalVotes|int32|总票数|
+|voteResult.approveVotes|int32|赞成票|
+|voteResult.opposeVotes|int32|反对票|
+|voteResult.pass|bool|是否通过，true-通过 false-未通过|
+|status|int32|提案状态|
+|address|string|提案地址|
+|height|int64|提案高度|
+|index|int32|提案index|
+|proposalID|string|提案ID|
 
-## 5、评论提案
-### (1)、comment proposal
+## 5 评论提案
+### 5.1 comment proposal
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "jsonrpc":"2.0",
     "method": "Chain33.CreateTransaction",
@@ -1448,42 +1451,42 @@ proposalID|string|提案ID
             "payload": {
                 "proposalID" : "",
                 "repHash" : "",
-                "comment" : "",
+                "comment" : ""
             }
         }
     
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-proposalID|string|是|所要评论的提案
-repHash|string|否|所要回复的评论
-comment|string|是|评论
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|proposalID|string|是|所要评论的提案|
+|repHash|string|否|所要回复的评论|
+|comment|string|是|评论|
 
 
-响应报文：
-```
+**响应报文：**
+```json
 {
-  "id": int32,
-  "result": "string",
-  "error": null
+    "id": int32,
+    "result": "string",
+    "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-result|string|交易十六进制编码后的字符串
+|参数|类型|说明|
+|----|----|----|----|
+|result|string|交易十六进制编码后的字符串|
 
-### (2) query proposal comment
+### 5.2 query proposal comment
 
 通过提案ID查询所对应评论
 
- 请求报文：
-```
+**请求报文：**
+```json
 {
     "method": "Chain33.Query",
     "params": [
@@ -1501,18 +1504,18 @@ result|string|交易十六进制编码后的字符串
     ]
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|是否必须|说明
--|-|-|-
-proposalID|string|否|提案ID
-count|int32|是|查询数量
-direction|int32|是|查询方向，0降序 1升序
-height|int64|否|查询量大翻页查询时候需要输入从某个高度开始
-index|int32|否|查询量大翻页查询时候需要输入从某个index开始
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|proposalID|string|否|提案ID|
+|count|int32|是|查询数量|
+|direction|int32|是|查询方向，0降序 1升序|
+|height|int64|否|查询量大翻页查询时候需要输入从某个高度开始|
+|index|int32|否|查询量大翻页查询时候需要输入从某个index开始|
 
-响应报文：
-```
+**响应报文：**
+```json
 {
   "id": int32,
   "result": {
@@ -1529,12 +1532,12 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
   "error": null
 }
 ```
-参数说明：
+**参数说明：**
 
-参数|类型|说明
--|-|-|-
-repHash|string|回复的评论(hash)
-comment|string|评论
-height|int64|提案高度
-index|int32|提案index
-hash|string|评论的hash
+|参数|类型|说明|
+|----|----|----|
+|repHash|string|回复的评论(hash)|
+|comment|string|评论|
+|height|int64|提案高度|
+|index|int32|提案index|
+|hash|string|评论的hash|
