@@ -1,122 +1,144 @@
-# 部署调用EVM合约
+# 部署调用EVM合约（通过chain33命令行实现）
 
-## 下载合约和编译器
-- windows: [evm.zip](https://bty33.oss-cn-shanghai.aliyuncs.com/chain33Dev/parachain/windows/evm.zip)
+[TOC]
 
-下载后解压到chain33所在目录，软件包包含
-```text
-store.sol    --- 示例合约
-solc.exe     --- solidity编译器(0.6.0)
+
+### 1.1 创建部署交易
 ```
+命令行参数：
+./chain33-cli evm create
+Usage:
+  chain33-cli evm create [flags]
 
-- linux
-
-```bash
-wget https://bty33.oss-cn-shanghai.aliyuncs.com/chain33Dev/parachain/linux/evm.tar.gz
+Flags:
+  -b, --abi string         abi string used for create constructor parameter(optional, not needed if no parameter for constructor)
+  -s, --alias string       human readable contract alias name(optional)
+  -c, --code string        contract binary code
+      --expire string      transaction expire time (optional) (default "120s")
+  -f, --fee float          contract gas fee (optional)
+  -h, --help               help for create
+  -n, --note string        transaction note info (optional)
+  -p, --parameter string   (optional)parameter for constructor and should be input as constructor(xxx,xxx,xxx)
 ```
+**参数说明：**
+    
+|参数|类型|是否必填|说明|
+|----|----|----|----|----|
+|abi|string|否|部署合约abi字符串，只有需要填充构造函数参数时才需要|
+|alias|string|否|部署合约别名|
+|code|string|是|部署合约字节码|
+|fee|int64|否|部署合约需要的交易费，可以通过EstimateGas来获取，也可以不填|
+|note|string|否|备注信息|
+|parameter|string|否|部署合约时构造函数参数，以字符串格式“constructor(xxx,xxx,xxx)”输入|
 
-下载后解压到chain33所在目录
-```bash
-tar -xzvf evm.tar.gz -C chain33
+**执行结果：**
+未签名的部署交易字符串
+
+**备注：**
+该交易字符串，经过签名就可以发送
+
+### 1.2 创建调用交易
 ```
+命令行参数：
+Usage:
+  chain33-cli evm call [flags]
 
-软件包包含
-```text
-store.sol    --- 示例合约
-solc         --- solidity编译器(0.6.0)
+Flags:
+  -a, --amount float       the amount transfer to the contract (optional)
+  -e, --exec string        evm contract address
+  -f, --fee float          contract gas fee (optional)
+  -h, --help               help for call
+  -n, --note string        transaction note info (optional)
+  -p, --parameter string   tx input parameter as:approve(13nBqpmC4VaJpEZ6J6G9NUM1Y55FQvw558, 100000000)
+  -t, --path string        abi path(optional), default to .(current directory) (default "./")
+
 ```
+**参数说明：**
+    
+|参数|类型|是否必填|说明|
+|----|----|----|----|----|
+|amount|小数，精确到0.0001|否|交易执行过程中，数量为amount的BTY从交易发起者账户中转账到该合约账户中|
+|exec|string|是|合约地址|
+|fee|int64|否|部署合约需要的交易费，可以通过EstimateGas来获取，也可以不填|
+|note|string|否|备注信息|
+|parameter|string|是|调用合约输入参数，以字符串格式，如“approve(13nBqpmC4VaJpEZ6J6G9NUM1Y55FQvw558, 100000000)”输入|
+|path|string|是|本地用来存放abi字符串信息的文件目录，命令就可以从本地读取来进行调用参数的abi序列化，abi文件以contractAddress.abi的格式来保存|
 
-## store合约
 
-store合约提供两个接口，分别是`get()`和`set()`，用于获取/设置合约变量`value`。合约内容如下:
+**执行结果：**
+未签名的调用交易字符串
 
-```solidity
-pragma solidity ^0.6;
+**备注：**
+该交易字符串，经过签名就可以发送
 
-contract MyStore {
-    uint value;
-    constructor() public{
-        value=9999999;
-    }
-
-    function set(uint x) public {
-        value = x;
-    }
-
-    function get() public returns (uint){
-        return value;
-    }
-}
+### 1.3 估算gas（部署交易或者调用交易执行时需要的支付的gas）
 ```
+命令行参数：
+Usage:
+  chain33-cli evm estimate [flags]
 
-## 部署store合约
-
-部署之前需要导入钱包并解锁钱包，执行命令部署合约
-
-```bash
-./chain33-cli evm create -c 16ui7XJ1VLM7YXcNhWwWsWS6CRC3ZA2sJ1 --sol store.sol
+Flags:
+  -c, --caller string   contract creator or caller
+  -h, --help            help for estimate
+  -x, --tx string       tx string(should be signatured)
 ```
-返回交易哈希txhash。合约名对应是`user.evm.<txhash>`，例如`user.evm.0x942dbf23fc0a373ff669ab103dd2f4631460956e30c6b34b6604124c7bcf3fd7`
+**参数说明：**
+    
+|参数|类型|是否必填|说明|
+|----|----|----|----|----|
+|caller|string|是|交易调用地址|
+|tx|string|是|未签名交易字符串|
 
-### 调用store合约
 
-### 1. 查询默认value值
-```bash
-##-a <合约名> -b <调用函数> -c <合约创建地址>
-./chain33-cli evm call -e "user.evm.0x942dbf23fc0a373ff669ab103dd2f4631460956e30c6b34b6604124c7bcf3fd7" -b "get()" -c "16ui7XJ1VLM7YXcNhWwWsWS6CRC3ZA2sJ1"
+**执行结果：**
+需要支付的gas
+
+### 1.4 查询
 ```
-返回交易哈希，通过交易哈希查询交易日志
-```bash
-./chain33-cli tx query -s 0xb22e16e73160aa46da9a25ae48ab4c62410575eaf0a14fed8c35bb5f59efb90d"
+命令行参数：
+Usage:
+  chain33-cli evm query [flags]
+
+Flags:
+  -a, --address string   evm contract address
+  -c, --caller string    the caller address
+  -h, --help             help for query
+  -b, --input string     call params (abi format) like foobar(param1,param2)
+  -t, --path string      abi path(optional), default to .(current directory) (default "./")
+
 ```
+**参数说明：**
+    
+|参数|类型|是否必填|说明|
+|----|----|----|----|----|
+|address|string|是|合约地址|
+|caller|string|是|交易调用地址|
+|input|string|是|查询输入参数，使用格式“foobar(param1,param2)”|
+|path|string|是|本地用来存放abi字符串信息的文件目录，命令就可以从本地读取来进行调用参数的abi序列化，abi文件以contractAddress.abi的格式来保存|
 
-交易日志中查找合约信息
-```text
-"ty": 603,
-"tyName": "LogCallContract",
-"log": {
-    "caller": "16ui7XJ1VLM7YXcNhWwWsWS6CRC3ZA2sJ1",
-    "contractName": "",
-    "contractAddr": "15nACVC6avSbTQ7q5yXaLXnepgnnUiW5va",
-    "usedGas": "248",
-    "ret": "0x0000000000000000000000000000000000000000000000000000000000000378",
-    "jsonRet": "[{\"name\":\"\",\"type\":\"uint256\",\"value\":9999999}]"
-},
+**执行结果：**
+查询结果信息
+
+### 1.5 evm合约内部转账
 ```
-可以看到value是默认值9999999
+命令行参数：
+chain33-cli evm transfer [flags]
 
-
-### 2. 设置value为888
-```bash
-./chain33-cli evm call -e "user.evm.0x942dbf23fc0a373ff669ab103dd2f4631460956e30c6b34b6604124c7bcf3fd7" -b "set(888)" -c "16ui7XJ1VLM7YXcNhWwWsWS6CRC3ZA2sJ1"
+Flags:
+  -a, --amount float      the amount transfer to the contract, precision to 0.0001
+  -c, --caller string     the caller address
+  -h, --help              help for transfer
+  -r, --receiver string   receiver address
 ```
+**参数说明：**
+    
+|参数|类型|是否必填|说明|
+|----|----|----|----|----|
+|amount|小数，精确到0.0001|是|转账额度|
+|caller|string|是|转账交易发起人地址|
+|receiver|string|是|接收地址|
 
-### 3. 查询value值
+**执行结果：**
+在evm合约内部进行BTY的转账
 
-```bash
-./chain33-cli evm call -e "user.evm.0x942dbf23fc0a373ff669ab103dd2f4631460956e30c6b34b6604124c7bcf3fd7" -b "get()" -c "16ui7XJ1VLM7YXcNhWwWsWS6CRC3ZA2sJ1"
-```
 
-返回交易哈希，通过交易哈希查询交易日志
-```bash
-./chain33-cli tx query -s 0x018dd1aa63c9a431d9a2e313232e36e670e1cb0c0fe6956632d7ba52ebba19bd"
-```
-
-查找合约信息
-```text
-"ty": 603,
-"tyName": "LogCallContract",
-"log": {
-    "caller": "16ui7XJ1VLM7YXcNhWwWsWS6CRC3ZA2sJ1",
-    "contractName": "",
-    "contractAddr": "15nACVC6avSbTQ7q5yXaLXnepgnnUiW5va",
-    "usedGas": "248",
-    "ret": "0x0000000000000000000000000000000000000000000000000000000000000378",
-    "jsonRet": "[{\"name\":\"\",\"type\":\"uint256\",\"value\":888}]"
-},
-```
-value值更新为888
-
-**注：**
-1. 在windows环境，使用终端进入chain33目录，执行chain33-cli.exe
-2. 命令中的交易哈希和对应的合约名需要根据实际的交易哈希替换

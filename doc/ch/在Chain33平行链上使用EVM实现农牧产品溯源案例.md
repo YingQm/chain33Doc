@@ -2,47 +2,40 @@
 
 [TOC]
 
-## 1 平行链环境搭建
-具体过程参见 [平行链环境搭建](https://chain.33.cn/document/130)
+下面以基于Solidity语言的食品溯源智能合约，阐述如何在chain33平行链上设计，实现，部署和调用智能合约
 
-运行（这里以Linux系统为例）：
+## 1 平行链环境搭建及运行
+具体过程参见 [平行链环境搭建](https://chain.33.cn/document/130)， 如果环境已经具备，则跳过这一步
 
+创建钱包并导入创世地址私钥（已经创建钱包的话就无需进行这一步了）：  
 ```shell
-$ cd $GOPATH/chain33
-$ nohup ./chain33 -f chain33.para.toml >> log.out 2>&1 &
-```
+# 生成随机数种子，建议可以手工生成并保存好，后继可以使用此种子恢复钱包，--rpc_laddr参数可以设定指向具体链的rpc地址（以下地址只是举例，需要根据自己实际监听的jrpc地址修改==>对应配置文件中的：jrpcBindAddr配置项）
+$ ./chain33-cli --rpc_laddr="http://localhost:8901"  seed generate -l 0
 
-创建钱包并导入创世地址私钥（已经创建钱包的话就无需进行这一步了）：
+# 保存种子，并设置钱包密码为"fzm12345"，注意：密码可以自定义(8位以上，字母+数字)，并且牢牢记住，后面解锁钱包时会用到
+$ ./chain33-cli --rpc_laddr="http://localhost:8901"  seed save -p fzm12345 -s "上一步中生成的seed"
 
-```shell
-# 生成随机数种子，建议可以手工生成并保存好，后继可以使用此种子恢复钱包
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." seed generate -l 0
+# 使用我们刚刚设置的密码解锁钱包（钱包新创建后默认为锁定状态），-t后跟的是自动锁定的时间，0代表永不锁定（重启例外）
+$ ./chain33-cli --rpc_laddr="http://localhost:8901"  wallet unlock -p fzm12345 -t 0
 
-# 保存种子，并设置钱包密码为"Password123"，注意：密码可以自定义，并且牢牢记住，后面解锁钱包时会用到
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." seed save -p "Password123" -s "上一步中生成的seed"
+# 检查钱包的状态
+$ ./chain33-cli --rpc_laddr="http://localhost:8901"  wallet status
 
-# 使用我们刚刚设置的密码解锁钱包（钱包新创建后默认为锁定状态）
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." wallet unlock -p "Password123"
+# 创建一个账户地址和私钥
+$ ./chain33-cli --rpc_laddr="http://localhost:8901"  account create -l testEvm
 
-# 导入创世地址私钥（这个私钥对应地址：1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs，这个地址中有代币）
-$ ./chain33-cli  --rpc_laddr="http://localhost:8901" --paraName="user.p.para." account import_key -k 3990969DF92A5914F7B71EEB9A4E58D6E255F32BF042FEA5318FC8B3D50EE6E8 -l genesis
+# 查询上述被创建账户的地址和私钥
+$ ./chain33-cli --rpc_laddr="http://localhost:8901"  account dump_key -a "上一步生成的地址"
 
 # 查看账户
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." account list
+$ ./chain33-cli --rpc_laddr="http://localhost:8901" account list
 ```
->注意：平行链节点执行指令时，需要添加`--rpc_laddr`以及`--paraName`后缀，rpc_laddr表示平行链节点启动的IP和监听端口，paraName表示平行链的名称（参见平行链配置文件中的Title）
+>注意：平行链节点执行指令时，需要添加`--rpc_laddr`，rpc_laddr表示平行链节点启动的IP和监听端口，如果不指定这个参数，默认是指向http://localhost:8801 (如果主链节点和平行链节点在同一台机器上，且主链端口是8801，那么不指定--rpc_laddr，命令就可能会跑错链)
 
-查询节点是否已经和主链同步 (平行链需要从主链上拉取区块，所以同步需要花一些时间)：
+查看平行链上区块同步的状态：
 
 ```shell
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." para is_sync
-true
-```
-
-查看区块同步的状态：
-
-```shell
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." block last_header
+$ ./chain33-cli --rpc_laddr="http://localhost:8901"  block last_header
 {
     "version": 0,
     "parentHash": "0x905d3c3ab62718381436720382e436a52976b6798896c77c97cb4e751e3a67c9",
@@ -56,109 +49,43 @@ $ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." bl
 }
 ```
 
-## 2 合约编译
-使用solidity编译器进行合约的编译，可使用以下工具：
+## 2 合约设计
+针对食品溯源这一场景，设计一个合约，实现产地，生产，流通等环节溯源, 合约满足以下特性：
+实际溯源的环节是一个非常复杂的过程，这边精简为以下几个环节： 农牧场，食品厂，超市，食品质检部门，用户产品具备的属性，以生猪为例各环节操作：
+1.     支持添加生猪信息，修改生猪信息。
+2.     支持添加质检信息
+3.     支持添加超时上架信息
+4.     支持添加用户评分信息
+5.     支持上述信息的查询
 
-[Remix-IDE](http://remix.ethereum.org/#appVersion=0.7.7&optimize=false&version=soljson-v0.4.23+commit.124ca40d.js)
+合约代码参见：[智能合约代码下载](https://bty33.oss-cn-shanghai.aliyuncs.com/chain33Dev/solidity/Food.zip)
 
-[Intellij-Solidity](https://plugins.jetbrains.com/plugin/9475-intellij-solidity)
+## 3 合约编译
+下载解压并编译上述智能合约，参见[ChainIDE配置与使用](https://baas.33.cn/doc/detail/154)
+拿到合约的bytecode和abi:
+bytecode: 60806040526000805560006001556000....省略后面部分，从IDE上拷贝...
+abi: [{"inputs":[{"internalType":"address","name":"_creator","type":"address"}....省略后面部分，从IDE上拷贝.....
 
-### 2.1 Remix-IDE
+## 4 合约部署和调用
+部署和调用合约的命令行参数参见[EVM合约部署](https://chain.33.cn/document/277)
 
-创建新的solidity合约，并选择编译器版本进行编译。
-
-![remix_prepare](https://public.33.cn/web/storage/upload/20190226/23cc7ad57c6c3c5d76bc7b665e7114a2.png "remix_prepare")
-
-编译成功后，可以使用ABI、Bytecode进行合约的创建。
-
-![remix_compare](https://public.33.cn/web/storage/upload/20190226/6de5d85d0fb53a47930b742f41cd57c6.png "remix_compare")
-
-* Remix生成的abi存在换行、空格等字符，chain33实现的evm不能直接使用，还需要进行进一步的格式化操作：去除换行、空格。
-* Chrome浏览器不支持编译后abi、bin文件的拷贝，因此尽量使用Edge或者IE浏览器。
-
-考虑到以上两点，因此推荐使用Intellij-Solidity插件进行编译。
-
-注意：
-* 在合约中定义结构体时：
-* 不要定义过多元素，否则编译器会报stack too deep异常。
-* 不要嵌套结构体，目前chain33内部实现的evm虚拟机不支持嵌套结构体类型。
-
-
-### 2.2 Intellij-Solidity
-
-#### 2.2.1 插件安装
-打开IntelliJ IDEA，在File->Settings->Plugins选项卡中，查找IntelliJ-Solidity插件进行安装。
-
-![intelliJ_solidity](https://public.33.cn/web/storage/upload/20190226/4a61b115ef65e813c75c306e1f0209eb.png "intelliJ_solidity")
-
-#### 2.2.2 solc安装
-本地没有安装genth节点，可以直接获取chain33官方编译好的版本或者使用代码进行本地编译；
-如果本地已有genth节点，可以直接使用节点自带solc。
-
-##### 2.2.2.1 进行solc本地编译
-获取最新solidity代码进行编译，github地址: https://github.com/ethereum/solidity
-具体安装过程参见 [Solidity官方文档](https://solidity.readthedocs.io/en/latest/installing-solidity.html#building-from-source)
-
-##### 2.2.2.2 获取solc编译版本
-根据自己的系统环境，去github上面 [获取编译好的solc](https://github.com/ethereum/solidity/releases/tag/v0.4.23)
-Linux系统环境选择solc-static-linux项进行下载，将其重命名为solc后，添加到系统环境变量
-Windows系统环境选择solidity-windows.zip项进行下载，解压后将solc.exe等命令添加到系统环境变量
-具体可自选，推荐选用0.5以下版本，链接给的是v0.4.23版本。
-
-#### 2.2.3 合约的编译
-获取食品溯源合约 [food.sol](https://github.com/harrylee2015/L/blob/master/share/solidity/food.sol)
-打开IntelliJ IDEA，使用Build->Compile Solidity编译合约，编译后的结果可以在项目栏中看到。
-
-![compile_solidity](https://public.33.cn/web/storage/upload/20190226/e286d4e377ffecd8271eec3ef4a36f4e.png "compile_solidity")
-
-也可以通过命令行来进行合约的编译：
-
+### 4.1 合约部署
 ```shell
-# 这里以Linux系统为例
-$ mkdir -p $GOPATH/chain33
-$ cp food.sol $GOPATH/chain33/food.sol
-$ cd $GOPATH/chain33
-$ solc --abi food.sol > Food.abi
-$ solc --bin food.sol > Food.bin
+# 构造合约部署交易, --user.p.mbaas. 是平行链的title，此参数一定要填对，不然平行链上无法收到交易
+./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.mbaas." evm create -s foodTest -f 1000000 -c 上述btyecode值 
+# 签名交易 -k：合约部署人的私钥(此私钥匙对应的地址是： 1LQJbjsNxh6ve6RCXBuDnUuMQsqXsc4cWK，  此地址在下面计算合约地址时会用到)
+./chain33-cli --rpc_laddr="http://localhost:8901" wallet sign -k 0xdb9415dfbd54ed84dccde80a0f9f2497c7b967116da92d8682900b324ea33d68 -d 上一步返回的数据
+# 发送交易（返回的hash要记住，下面计算合约地址的时候会用到）
+./chain33-cli --rpc_laddr="http://localhost:8901" wallet send -d 上一步签过名的数据
+# 查询交易（在结果中 "receipt": {"ty": 2,"tyName": "ExecOk".....} 代表交易执行成功，如果ty=1,代表交易只是被打包但执行失败）
+./chain33-cli --rpc_laddr="http://localhost:8901" tx query_hash -s 上一步返回的hash
+# 如果上述交易执行返回ExecOk,代表合约部署成功，计算此合约的地址, --user.p.mbaas. 是平行链的title，此参数一定要填对 -a 合约部署人的地址 -s 上一步返回的hash(去掉前面0x的值)，假设此处返回的是：174dwVy4fEY7WQkpuRZRci88BE5iuHHSY4
+./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.mbaas." evm calc -a 1LQJbjsNxh6ve6RCXBuDnUuMQsqXsc4cWK -s 上一步返回的hash去掉最前面的0x
 ```
 
-使用生成的abi、bin文件进行合约的创建
+### 4.2 信息录入
 
-## 3 合约创建
-```shell
-# 进入目录
-$ cd $GOPATH/chain33
-# 使用chain33-cli中已有命令行进行合约的创建
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." evm create --sol food.sol -c 1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs -f 0.1
-# 输出样例
-0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d（这个hash要保存好，后续命令将会使用到）
-
-# 根据返回的hash，查看合约创建详细信息
-# 这里将输出重定向到了query_tx.txt文件中，可以打开该文件进行查看
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." tx query -s "上一步返回的hash（这个hash要保存好，后续命令将会使用到）" > query_tx.txt
-```
-
-合约也可以使用前面生成的abi、bin文件来创建：
-
-```shell
-# 使用abi文件创建合约，因为参数较长所以省略了一些，命令执行后返回的hash要保存好，后续命令将会使用到
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." evm create -c 1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs -f 0.1 -b '[{"constant":false,"inputs":[name":"_id","type":"string"},{"name":"_shopDate","type":"uint256"}],......,"type":"function"}]'
-
-# 使用bin文件创建合约，因为参数较长所以省略了一些，命令执行后返回的hash要保存好，后续命令将会使用到
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." evm create -c 1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs -f 0.1 -i '60606040526000805560006001556000600255341561001d57600080fd5b613c688061002c6000396000f300606060405260043610610107576000357c010000000000000000000000000000000000000000000000......72305820312fdba79b13b73f35f86d697bdf484ccf71d5f18456270446f3a7cf1af948db0029'
-```
-
-输出参考 [合约创建](https://github.com/harrylee2015/L/blob/master/share/solidity/food_trace.md#3-%E5%90%88%E7%BA%A6%E7%9A%84%E5%88%9B%E5%BB%BA)
-
-## 4 案例实现
-实现一个食品溯源的流程，实现产地，生产，流通等环节溯源。
-
-实际溯源的环节是一个非常复杂的过程，这边精简为以下几个环节： 农牧场，食品厂，超市，食品质检部门，用户
-产品具备的属性，以生猪为例各环节操作：
-
-### 4.1 信息录入
-
-#### 4.1.1 添加猪肉信息
+#### 4.2.1 添加猪肉信息
 农牧场出栏
 
 |出栏批次|名称|重量|出栏日期|产地|
@@ -167,137 +94,54 @@ $ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." ev
 
 ```shell
 # 使用addPigInfo进行猪肉信息的录入
-# 其中0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d为前面提示的需要保存的hash，用户需要将其替换成自己保存的hash
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." evm call -c 1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs -e "user.p.para.user.evm.0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d" -f 0.01 -b "addPigInfo(\"1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs\",\"pig001\",\"00001\",\"500\",\"20190210\",\"NanJing\")"
+# 重要： 先在本地生成一个174dwVy4fEY7WQkpuRZRci88BE5iuHHSY4.abi文件，复制IDE中生成的abi内容到此文件中
+# 其中174dwVy4fEY7WQkpuRZRci88BE5iuHHSY4替换成自己的合约地址
+$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.mbaas." evm call -e 174dwVy4fEY7WQkpuRZRci88BE5iuHHSY4 -p "addPigInfo("1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs","pig001","00001","500","20190210","NanJing")"  
+# -k是调用合约人的私钥
+$ ./chain33-cli --rpc_laddr="http://localhost:8901" wallet sign -k 0xdb9415dfbd54ed84dccde80a0f9f2497c7b967116da92d8682900b324ea33d68 -d 上一步返回的结果
+$ ./chain33-cli --rpc_laddr="http://localhost:8901" wallet send -d 上一步返回的结果
 
-# 通过hash查看猪肉信息是否成功添加
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." tx query -s "上一步返回的hash"
+# 通过hash查看猪肉信息是否成功添加，如果返回"receipt": {"ty": 2,"tyName": "ExecOk".....} 代表交易执行成功，如果ty=1,代表交易只是被打包但执行失败）
+$ ./chain33-cli --rpc_laddr="http://localhost:8901" tx query -s "上一步返回的hash"
 
-# 使用getPigNumber()函数查看信息是否成功录入
-# 其中0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d为前面提示的需要保存的hash，用户需要将其替换成自己保存的hash
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." evm call -c 1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs -e "user.p.para.user.evm.0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d"  -f 0.01 -b "getPigNumber()"
+# 使用getPigNumber()函数查看录入了多少条生猪信息
+# 其中-a 174dwVy4fEY7WQkpuRZRci88BE5iuHHSY4替换成合约地址，-c为调用人地址，-b为合约中查询方法
+$ ./chain33-cli --rpc_laddr="http://localhost:8801" --paraName="user.p.mbaas." evm query -a  174dwVy4fEY7WQkpuRZRci88BE5iuHHSY4 -c 1LQJbjsNxh6ve6RCXBuDnUuMQsqXsc4cWK -b "getPigNumber()"
 
-# 通过hash查看getPigNumber()函数结果
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." tx query -s "上一步返回的hash"
+# 通过getPigInfoByIndex函数，查询index对应的生猪详细信息
+$ ./chain33-cli --rpc_laddr="http://localhost:8801" --paraName="user.p.mbaas." evm query -a  174dwVy4fEY7WQkpuRZRci88BE5iuHHSY4 -c 1LQJbjsNxh6ve6RCXBuDnUuMQsqXsc4cWK -b "getPigInfoByIndex(0)"
 ```
 
-[输出参考](https://github.com/harrylee2015/L/blob/master/share/solidity/food_trace.md#411-%E7%8C%AA%E8%82%89%E4%BF%A1%E6%81%AF%E5%BD%95%E5%85%A5)
-
-#### 4.1.2 添加食品信息
+#### 4.2.2 添加食品信息
 食品厂生产（比如火腿)
 
 |食品编号(比如二维码)|名称|重量|生产日期|包装日期|保质期|猪肉出栏批次|
 |----|----|----|----|----|----|----|----|
 |001|food001|500|20190215|20190220|20210215|00001|
 
-```shell
-# 使用addFoodInfo()进行食品信息的录入
-# 其中0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d为前面提示的需要保存的hash，用户需要将其替换成自己保存的hash
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." evm call -c 1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs -e "user.p.para.user.evm.0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d" -f 0.01 -b "addFoodInfo(\"1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs\", \"001\", \"food001\", \"500\", \"20190215\", \"20190220\", \"20210215\", \"00001\", \"\", \"\")"
+上链和查询脚本和3.2.1中类似(具体方法名称和参数，请见Food.sol中定义)
 
-# 通过hash查看食品信息是否成功添加
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." tx query -s "上一步返回的hash"
-
-# 使用getFoodNumber()函数查看信息是否成功录入
-# 其中0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d为前面提示的需要保存的hash，用户需要将其替换成自己保存的hash
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." evm call -c 1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs -e "user.p.para.user.evm.0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d" -f 0.01 -b "getFoodNumber()"
-
-# 通过hash查看getFoodNumber()函数结果
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." tx query -s "上一步返回的hash"
-```
-
-[输出参考](https://github.com/harrylee2015/L/blob/master/share/solidity/food_trace.md#412-%E9%A3%9F%E5%93%81%E4%BF%A1%E6%81%AF%E5%BD%95%E5%85%A5)
-
-#### 4.1.3 添加质检信息
+#### 4.2.3 添加质检信息
 食品质检部门抽检
 
 |食品编号(比如二维码)|检测时间|检测结果|检测说明|
 |----|----|----|----|
 |food001|20190226|Qualified|The food is good.|
 
-```shell
-# 使用addCheckInfo()进行质检信息的录入
-# 其中0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d为前面提示的需要保存的hash，用户需要将其替换成自己保存的hash
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." evm call -c 1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs -e "user.p.para.user.evm.0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d" -f 0.01 -b "addCheckInfo(\"1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs\", \"food001\", \"20190226\", \"Qualified\", \"The food is good.\")"
+上链和查询脚本和3.2.1中类似(具体方法名称和参数，请见Food.sol中定义)
 
-# 通过hash查看质检信息是否成功添加
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." tx query -s "上一步返回的hash"
-
-# 使用getCheckInfoNumber()函数查看信息是否成功录入
-# 其中0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d为前面提示的需要保存的hash，用户需要将其替换成自己保存的hash
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." evm call -c 1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs -e "user.p.para.user.evm.0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d" -f 0.01 -b "getCheckInfoNumber()"
-
-# 通过hash查看getCheckInfoNumber()函数结果
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." tx query -s "上一步返回的hash"
-```
-
-[输出参考](https://github.com/harrylee2015/L/blob/master/share/solidity/food_trace.md#413-%E8%B4%A8%E6%A3%80%E4%BF%A1%E6%81%AF%E5%BD%95%E5%85%A5)
-
-#### 4.1.4 添加超市上架信息
+#### 4.2.4 添加超市上架信息
 
 |食品编号(比如二维码)|上架日期|
 |----|----|
 |food001|20190304|
 
-```shell
-# 使用updateShopDate()进行超市上架信息的录入
-# 其中0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d为前面提示的需要保存的hash，用户需要将其替换成自己保存的hash
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." evm call -c 1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs -e "user.p.para.user.evm.0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d" -f 0.01 -b "updateShopDate(\"food001\", \"20190304\")"
+上链和查询脚本和3.2.1中类似(具体方法名称和参数，请见Food.sol中定义)
 
-# 通过hash查看超市上架信息是否成功添加
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." tx query -s "上一步返回的hash"
-```
-
-[输出参考](https://github.com/harrylee2015/L/blob/master/share/solidity/food_trace.md#414-%E4%B8%8A%E6%9E%B6%E4%BF%A1%E6%81%AF%E5%BD%95%E5%85%A5)
-
-#### 4.1.5 添加用户评分信息
+#### 4.2.5 添加用户评分信息
 
 |食品编号|用户评分|
 |----|----|
 |food001|90|
 
-```shell
-# 使用updateScore()进行评分信息的录入
-# 其中0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d为前面提示的需要保存的hash，用户需要将其替换成自己保存的hash
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." evm call -c 1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs -e "user.p.para.user.evm.0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d" -f 0.01 -b "updateScore(\"food001\", \"90\")"
-
-# 通过hash查看评分信息是否成功添加
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." tx query -s "上一步返回的hash"
-```
-
-[输出参考](https://github.com/harrylee2015/L/blob/master/share/solidity/food_trace.md#415-%E8%AF%84%E5%88%86%E4%BF%A1%E6%81%AF%E5%BD%95%E5%85%A5)
-
-### 4.2 信息查询
-
-#### 4.2.1 猪肉信息查询
-
-```shell
-# 使用pigId查询猪肉信息
-# 其中0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d为前面提示的需要保存的hash，用户需要将其替换成自己保存的hash
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." evm call -c 1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs -e "user.p.para.user.evm.0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d" -f 0.01 -b "getPigInfoByID(\"00001\")"
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." tx query -s "上一步返回的hash"
-```
-
-[输出参考](https://github.com/harrylee2015/L/blob/master/share/solidity/food_trace.md#423-%E7%81%AB%E8%85%BF%E5%8E%9F%E6%9D%90%E6%96%99%E7%8C%AA%E8%82%89%E4%BF%A1%E6%81%AF%E6%9F%A5%E8%AF%A2)
-
-#### 4.2.2 食品信息查询
-
-```shell
-# 使用foodId查询食品（火腿）信息
-# 其中0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d为前面提示的需要保存的hash，用户需要将其替换成自己保存的hash
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." evm call -c 1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs -e "user.p.para.user.evm.0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d" -f 0.01 -b "getFoodInfoByID(\"food001\")"
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." tx query -s "上一步返回的hash"
-```
-
-[输出参考](https://github.com/harrylee2015/L/blob/master/share/solidity/food_trace.md#421-%E7%81%AB%E8%85%BF%E4%BF%A1%E6%81%AF%E6%9F%A5%E8%AF%A2)
-
-#### 4.2.3 质检信息查询
-
-```shell
-# 使用foodId查询质检信息
-# 其中0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d为前面提示的需要保存的hash，用户需要将其替换成自己保存的hash
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." evm call -c 1CbEVT9RnM5oZhWMj4fxUrJX94VtRotzvs -e "user.p.para.user.evm.0x83f7f41a2b7b095539d104bc2935bfdb043f3620b43d3362037fb62ad08d616d" -f 0.01 -b "getCheckInfoByID(\"food001\")"
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.para." tx query -s "上一步返回的hash"
-```
-
-[输出参考](https://github.com/harrylee2015/L/blob/master/share/solidity/food_trace.md#422-%E8%B4%A8%E6%A3%80%E4%BF%A1%E6%81%AF%E6%9F%A5%E8%AF%A2)
+上链和查询脚本和3.2.1中类似(具体方法名称和参数，请见Food.sol中定义)

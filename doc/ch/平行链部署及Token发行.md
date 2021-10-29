@@ -110,7 +110,7 @@ CTRL + C
 $ ./chain33.exe -f chain33.para.toml
 ```
 
-### 2.2 配置token-finisher和token-blacklist
+### 2.2 命令行配置token-finisher、token-blacklist，发行token
 token-finisher: token审核人的地址， 用来在token预创建之后，对token的信息（名称，额度）进行审核。
 token-blacklist：token黑名单，指示哪些名称不可以在链上创建，比如BTC,ETH等等。
 
@@ -123,7 +123,7 @@ $ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.devtest."
 $ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.devtest." wallet send -d "上一步生成的签名后的数据"
 
 # 查询结果
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.devtest." config query_config -k token-finisher
+$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.devtest." config query -k token-finisher
 # 输出样例
 {
     "key": "token-finisher",
@@ -136,7 +136,7 @@ $ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.devtest."
 $ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.devtest." wallet send -d "上一步生成的签名后的数据"
 
 # 查询结果
-$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.devtest." config query_config -k token-blacklist
+$ ./chain33-cli --rpc_laddr="http://localhost:8901" --paraName="user.p.devtest." config query -k token-blacklist
 # 输出样例
 {
     "key": "token-blacklist",

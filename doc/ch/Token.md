@@ -283,7 +283,7 @@ Response:
 |----|----|----|
 |execer|[]byte|主链上查询：token 平行链上查询:user.p.xxxx.token|
 |funcName|string|GetTokens|
-|payload|[]byte|status: 1, queryAll: true/false, symbolOnly:选填（true/false）|
+|payload|[]byte|status: 1, queryAll 是否查询所有: true/false, symbolOnly:是否只返回symbol值 选填（true/false）|
 
 **响应报文：**
 
@@ -588,7 +588,6 @@ Response:
 |----|----|----|
 |symbol|string|token标记符，最大长度是16个字符，且必须为大写字符|
 |account|string|token 对应地址的帐号信息|
-|introduction|string|token介绍，最大长度为1024个字节|
 |balance|int|帐号的可用余额|
 |frozen|int|帐号中冻结余额|
 |addr|string|帐号的地址|
