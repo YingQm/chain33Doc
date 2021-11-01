@@ -1,7 +1,7 @@
 # autonomy 接口
 [TOC]
 ## 1 自治系统参数默认值以及范围
-### 1.1 可修改参数：
+### 1.1 可修改参数
 ```
     // 默认公示周期,以区块高度计算,换算成时间大概一周
     publicPeriod         int32 = 17280 * 7  
@@ -50,7 +50,7 @@
 	// 最大全体持票人赞成率
 	maxPubApproveRatio = 80
 ```
-### 1.2 不可修改参数：
+### 1.2 不可修改参数
 ```
     // 董事会成员数范围
     minBoards                 = 20
@@ -58,7 +58,7 @@
 ```
 
 ## 1 提案董事会成员
-### 1.1 proposal board
+### 1.1 提案董事会成员 PropBoard
 
 **请求报文：**
 ```json
@@ -70,14 +70,14 @@
             "execer": "autonomy",
             "actionName": "PropBoard",
             "payload": {
-                "year" : 2019,
-                "month" : 8,
-                "day" : 29,
-                "update" : false,
-                "boards" : ["14KEKbYtKKQm4wMthSK9J4La4nAiidGozt", "1EbDHAXpoiewjPLX9uqoz38HsKqMXayZrF", "1KcCVZLSQYRUwE5EXTsAoQs9LuJW6xwfQa"],
-                "startBlockHeight" : 100,
-                "endBlockHeight" : 1000,
-                "realEndBlockHeight" : 0
+                "year": 2019,
+                "month": 8,
+                "day": 29,
+                "boards": ["14KEKbYtKKQm4wMthSK9J4La4nAiidGozt", "1EbDHAXpoiewjPLX9uqoz38HsKqMXayZrF", "1KcCVZLSQYRUwE5EXTsAoQs9LuJW6xwfQa"],
+                "startBlockHeight": 100,
+                "endBlockHeight": 1000,
+                "realEndBlockHeight": 0,
+                "boardUpdate": 3
             }
         }    
     ]
@@ -90,13 +90,11 @@
 |year|int32|否|提案年|
 |month|int32|否|提案月|
 |day|int32|否|提案日|
-|update|bool|否|替换或者更新boards；替换(false); 更新(true)|
 |boards|[]string|是|提案董事会成员|
 |startBlockHeight|int64|是|开始投票高度|
-|endBlockHeight|int64|是|结束投票高度|
-|realEndBlockHeight|int64|否|实际投票结束高度，不需要填写|
-
-* endBlockHeight > startBlockHeight + 720 (自治系统中所有涉及提案都需要满足)
+|endBlockHeight|int64|是|结束投票高度, endBlockHeight > startBlockHeight + 720 (自治系统中所有涉及提案都需要满足)|
+|realEndBlockHeight|int64|否|实际投票结束高度, 不需要填写|
+|boardUpdate|int32|是|1:新增, 2:删除, 3:整体更新|
 
 **响应报文：**
 ```json
@@ -112,7 +110,7 @@
 |----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 1.2 revoke proposal board
+### 1.2 撤销提案董事会成员 RvkPropBoard
 
 **请求报文：**
 ```json
@@ -124,7 +122,7 @@
             "execer": "autonomy",
             "actionName": "RvkPropBoard",
             "payload": {
-                "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+                "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
             }
         }
     ]
@@ -134,7 +132,7 @@
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|proposalID|string|是|提案ID，即PropBoard的交易hash|
+|proposalID|string|是|提案ID, 即PropBoard的交易hash|
 
 **响应报文：**
 ```json
@@ -150,7 +148,7 @@
 |----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 1.3 vote proposal board
+### 1.3 投票提案董事会成员 VotePropBoard
 
 **请求报文：**
 ```json
@@ -162,8 +160,8 @@
             "execer": "autonomy",
             "actionName": "VotePropBoard",
             "payload": {
-                "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd",
-                "approve": true,
+                "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd",
+                "voteOption": 1,
                 "originAddr": ["14KEKbYtKKQm4wMthSK9J4La4nAiidGozt", "1EbDHAXpoiewjPLX9uqoz38HsKqMXayZrF", "1KcCVZLSQYRUwE5EXTsAoQs9LuJW6xwfQa"]
             }
         }
@@ -174,8 +172,8 @@
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|proposalID|string|是|提案ID，即PropBoard的交易hash|
-|approve|bool|是|是否同意该提案，true：同意；false: 不同意|
+|proposalID|string|是|提案ID, 即PropBoard的交易hash|
+|voteOption|int32|是|投票提案, 1:赞成, 2:反对, 3:弃权|
 |originAddr|[]string|否|如果有绑定挖矿的可以将挖矿地址填入进行投票|
 
 **响应报文：**
@@ -192,7 +190,7 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 1.4 terminate proposal board
+### 1.4 终止董事会成员提案 TmintPropBoard
 
 **请求报文：**
 ```json
@@ -204,7 +202,7 @@
             "execer": "autonomy",
             "actionName": "TmintPropBoard",
             "payload": {
-                "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+                "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
             }
         }
     ]
@@ -214,7 +212,7 @@
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|proposalID|string|是|提案ID，即PropBoard的交易hash|
+|proposalID|string|是|提案ID, 即PropBoard的交易hash|
 
 **响应报文：**
 ```json
@@ -230,8 +228,8 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 1.5 query proposal board
-#### 1.5.1 通过proposalID查询提案
+### 1.5 查询提案
+#### 1.5.1 通过 proposalID 查询提案 GetProposalBoard
 **请求报文：**
 ```json
 {
@@ -241,7 +239,7 @@
             "execer": "autonomy",
             "funcName": "GetProposalBoard",
             "payload": {
-                "data" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+                "data": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
             }
         }
     ]
@@ -251,9 +249,9 @@
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|data|string|是|提案ID，即PropBoard的交易hash|
+|data|string|是|提案ID, 即PropBoard的交易hash|
 
-#### 1.5.2 通过状态或者地址以及状态地址查询提案
+#### 1.5.2 通过状态或者地址以及状态地址查询提案 ListProposalBoard
 
 **请求报文：**
 ```json
@@ -264,12 +262,12 @@
             "execer": "autonomy",
             "funcName": "ListProposalBoard",
             "payload": {
-                "status" : 1,
-                "addr" : "", 
-                "count" : 1,
-                "direction" : 0,
-                "height" : -1,
-                "index" : -1
+                "status": 1,
+                "addr": "", 
+                "count": 1,
+                "direction": 0,
+                "height": -1,
+                "index": -1
             }
         }
     ]
@@ -279,54 +277,54 @@
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-status|int32|是|提案状态
-addr|string|否|提案地址
-count|int32|是|查询数量
-direction|int32|是|查询方向，0降序 1升序
-height|int64|否|查询量大翻页查询时候需要输入从某个高度开始
-index|int32|否|查询量大翻页查询时候需要输入从某个index开始
-
-* status 1-提案状态 2-提案撤销状态 3-投票状态 4-提案结束状态
+|status|int32|是|提案状态, 1:提案申请状态, 2:提案撤销状态, 3:提案投票状态, 4:提案结束状态|
+|addr|string|否|提案地址|
+|count|int32|是|查询数量|
+|direction|int32|是|查询方向, 0:降序, 1:升序|
+|height|int64|否|查询量大翻页查询时候需要输入从某个高度开始|
+|index|int32|否|查询量大翻页查询时候需要输入从某个index开始|
 
 **响应报文：**
 ```json
 {
     "id": int32,
     "result": {
-      "propBoards" : [
+      "propBoards": [
         {
             "propBoard": {
-                "year" : 2019,
-                "month" : 8,
-                "day" : 29,
-                "boards" : ["14KEKbYtKKQm4wMthSK9J4La4nAiidGozt", "1EbDHAXpoiewjPLX9uqoz38HsKqMXayZrF", "1KcCVZLSQYRUwE5EXTsAoQs9LuJW6xwfQa"],
-                "startBlockHeight" : 100,
-                "endBlockHeight" : 1000
+                "year": 2019,
+                "month": 8,
+                "day": 29,
+                "boards": ["14KEKbYtKKQm4wMthSK9J4La4nAiidGozt", "1EbDHAXpoiewjPLX9uqoz38HsKqMXayZrF", "1KcCVZLSQYRUwE5EXTsAoQs9LuJW6xwfQa"],
+                "startBlockHeight": 100,
+                "endBlockHeight": 1000
             },
             "curRule": {
-                "boardApproveRatio" : 66,
-                "pubOpposeRatio" : 33,
-                "proposalAmount" : 10000000,
-                "largeProjectAmount" : 100000000,
-                "publicPeriod" : 120960
+                "boardApproveRatio": 66,
+                "pubOpposeRatio": 33,
+                "proposalAmount": 10000000,
+                "largeProjectAmount": 100000000,
+                "publicPeriod": 120960,
+                "pubAttendRatio": 80,
+                "pubApproveRatio": 70
             },
-            "board" : {
-                "boards" : ["12cjnN5D4DPdBQSwh6vjwJbtsW4EJALTMv","1Luh4AziYyaC5zP3hUXtXFZS873xAxm6rH"],
-                "revboards" : ["1NNaYHkscJaLJ2wUrFNeh6cQXBS4TrFYeB"],
-                "amount" : 10000000,
-                "startHeight" : 100
+            "board": {
+                "boards": ["12cjnN5D4DPdBQSwh6vjwJbtsW4EJALTMv","1Luh4AziYyaC5zP3hUXtXFZS873xAxm6rH"],
+                "revboards": ["1NNaYHkscJaLJ2wUrFNeh6cQXBS4TrFYeB"],
+                "amount": 10000000,
+                "startHeight": 100
             },
             "voteResult": {
-                "totalVotes" : 100,
-                "approveVotes" : 70,
-                "opposeVotes" : 20,
-                "pass" : true
+                "totalVotes": 100,
+                "approveVotes": 70,
+                "opposeVotes": 20,
+                "pass": true
             },
-            "status" : 1,
-            "address" : "1EDnnePAZN48aC2hiTDzhkczfF39g1pZZX",
-            "height" : 100,
-            "index" : 1,
-            "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+            "status": 1,
+            "address": "1EDnnePAZN48aC2hiTDzhkczfF39g1pZZX",
+            "height": 100,
+            "index": 1,
+            "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
         }
       ]
     },
@@ -339,6 +337,8 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 |----|----|----|----|
 |propBoard|json|参见(1)|
 |curRule.boardApproveRatio|int32|董事会赞成率|
+|curRule.pubAttendRatio|int32|全体持票人参与率|
+|curRule.pubApproveRatio|int32|全体持票人赞成率|
 |curRule.pubOpposeRatio|int32|全体持票人否决率|
 |curRule.proposalAmount|int64|提案金|
 |curRule.largeProjectAmount|int64|重大项目阈值|
@@ -350,14 +350,14 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 |voteResult.totalVotes|int32|总票数|
 |voteResult.approveVotes|int32|赞成票|
 |voteResult.opposeVotes|int32|反对票|
-|voteResult.pass|bool|是否通过，true-通过 false-未通过|
+|voteResult.pass|bool|是否通过, true:通过, false:未通过|
 |status|int32|提案状态|
 |address|string|提案地址|
 |height|int64|提案高度|
 |index|int32|提案index|
 |proposalID|string|提案ID|
 
-### 1.6 query active board
+### 1.6 查询有效的董事会成员 GetActiveBoard
 
 **请求报文：**
 ```json
@@ -368,7 +368,7 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
             "execer": "autonomy",
             "funcName": "GetActiveBoard",
             "payload": {
-                "data" : "1"
+                "data": "1"
             }
         }    
     ]
@@ -385,10 +385,10 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 {
     "id": int32,
     "result": {
-        "boards" : ["12cjnN5D4DPdBQSwh6vjwJbtsW4EJALTMv","1Luh4AziYyaC5zP3hUXtXFZS873xAxm6rH"],
-        "revboards" : ["1NNaYHkscJaLJ2wUrFNeh6cQXBS4TrFYeB"],
-        "amount" : 10000000,
-        "startHeight" : 100
+        "boards": ["12cjnN5D4DPdBQSwh6vjwJbtsW4EJALTMv","1Luh4AziYyaC5zP3hUXtXFZS873xAxm6rH"],
+        "revboards": ["1NNaYHkscJaLJ2wUrFNeh6cQXBS4TrFYeB"],
+        "amount": 10000000,
+        "startHeight": 100
     },
     "error": null
 }
@@ -403,7 +403,7 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 |startHeight|int64|当前周期的起始区块高度|
 
 ## 2 提案项目
-### 2.1 proposal project
+### 2.1 提案项目 PropProject
 
 **请求报文：**
 ```json
@@ -415,21 +415,21 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
             "execer": "autonomy",
             "actionName": "PropProject",
             "payload": {
-                "year" : 2019,
-                "month" : 8,
-                "day" : 29,
-                "firstStage" : "",
-                "lastStage" : "",
-                "production" : "",
-                "description" : "",
-                "contractor" : "",
-                "amount" : 10000000,
-                "amountDetail" : "",
-                "toAddr" : "1EbDHAXpoiewjPLX9uqoz38HsKqMXayZrF",
-                "startBlockHeight" : 100,
-                "endBlockHeight" : 1000,
-                "realEndBlockHeight" : 0,
-                "projectNeedBlockNum" : 100000
+                "year": 2019,
+                "month": 8,
+                "day": 29,
+                "firstStage": "",
+                "lastStage": "",
+                "production": "",
+                "description": "",
+                "contractor": "",
+                "amount": 10000000,
+                "amountDetail": "",
+                "toAddr": "1EbDHAXpoiewjPLX9uqoz38HsKqMXayZrF",
+                "startBlockHeight": 100,
+                "endBlockHeight": 1000,
+                "realEndBlockHeight": 0,
+                "projectNeedBlockNum": 100000
             }
         }    
     ]
@@ -451,11 +451,9 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 |amountDetail|string|否|经费细则|
 |toAddr|string|是|收款地址|
 |startBlockHeight|int64|是|开始投票高度|
-|endBlockHeight|int64|是|结束投票高度|
-|realEndBlockHeight|int64|否|实际投票结束高度，不需要填写|
+|endBlockHeight|int64|是|结束投票高度, endBlockHeight > startBlockHeight + 720 (自治系统中所有涉及提案都需要满足)|
+|realEndBlockHeight|int64|否|实际投票结束高度, 不需要填写|
 |projectNeedBlockNum|int64|否|项目耗时预估（以区块计算）|
-
-* endBlockHeight > startBlockHeight + 720 (自治系统中所有涉及提案都需要满足)
 
 **响应报文：**
 ```json
@@ -471,7 +469,7 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 2.2 revoke proposal project
+### 2.2 撤销提案项目 RvkPropProject
 
 **请求报文：**
 ```json
@@ -483,7 +481,7 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
             "execer": "autonomy",
             "actionName": "RvkPropProject",
             "payload": {
-                "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+                "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
             }
         }
     ]
@@ -493,7 +491,7 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|proposalID|string|是|提案ID，即PropProject的交易hash|
+|proposalID|string|是|提案ID, 即PropProject的交易hash|
 
 **响应报文：**
 ```json
@@ -509,7 +507,7 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 2.3 vote proposal project
+### 2.3 投票提案项目 VotePropProject
 
 **请求报文：**
 ```json
@@ -521,8 +519,8 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
             "execer": "autonomy",
             "actionName": "VotePropProject",
             "payload": {
-                "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd",
-                "approve": true
+                "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd",
+                "vote": 1
             }
         }
     ]
@@ -532,8 +530,8 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|proposalID|string|是|提案ID，即PropProject的交易hash|
-|approve|bool|是|是否同意该提案，true：同意；false: 不同意|
+|proposalID|string|是|提案ID, 即PropProject的交易hash|
+|vote|int32|是|投票提案, 1:赞成, 2:反对, 3:弃权|
 
 **响应报文：**
 ```json
@@ -549,7 +547,7 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 2.4 pub vote proposal project
+### 2.4 投票反对提案项目 PubVotePropProject
 
 **请求报文：**
 ```json
@@ -561,7 +559,7 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
             "execer": "autonomy",
             "actionName": "PubVotePropProject",
             "payload": {
-                "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd",
+                "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd",
                 "oppose": true,
                 "originAddr": ["14KEKbYtKKQm4wMthSK9J4La4nAiidGozt", "1EbDHAXpoiewjPLX9uqoz38HsKqMXayZrF", "1KcCVZLSQYRUwE5EXTsAoQs9LuJW6xwfQa"]
             }
@@ -573,8 +571,8 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|proposalID|string|是|提案ID，即PropProject的交易hash|
-|oppose|bool|是|是否反对该提案，true：反对；false: 不反对|
+|proposalID|string|是|提案ID, 即PropProject的交易hash|
+|oppose|bool|是|是否反对该提案, true:反对, false:不反对|
 |originAddr|[]string|否|如果有绑定挖矿的可以将挖矿地址填入进行投票|
 
 **响应报文：**
@@ -591,7 +589,7 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 2.5 terminate proposal project
+### 2.5 终止提案项目 TmintPropProject
 
 **请求报文：**
 ```json
@@ -603,7 +601,7 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
             "execer": "autonomy",
             "actionName": "TmintPropProject",
             "payload": {
-                "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+                "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
             }
         }
     ]
@@ -613,7 +611,7 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|proposalID|string|是|提案ID，即PropProject的交易hash|
+|proposalID|string|是|提案ID, 即PropProject的交易hash|
 
 **响应报文：**
 ```json
@@ -629,9 +627,8 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 2.5 query proposal project
-
-#### 2.5.1 通过proposalID查询提案
+### 2.5 查询提案
+#### 2.5.1 通过 proposalID 查询提案 GetProposalProject
 
 **请求报文：**
 ```json
@@ -642,7 +639,7 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
             "execer": "autonomy",
             "funcName": "GetProposalProject",
             "payload": {
-                "data" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+                "data": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
             }
         }
     ]
@@ -652,9 +649,9 @@ index|int32|否|查询量大翻页查询时候需要输入从某个index开始
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-data|string|是|提案ID，即PropProject的交易hash
+|data|string|是|提案ID, 即PropProject的交易hash|
 
-#### 2.5.2 通过状态或者地址以及状态地址查询提案
+#### 2.5.2 通过状态或者地址以及状态地址查询提案 ListProposalProject
 
 **请求报文：**
 ```json
@@ -665,12 +662,12 @@ data|string|是|提案ID，即PropProject的交易hash
             "execer": "autonomy",
             "funcName": "ListProposalProject",
             "payload": {
-                "status" : 1,
-                "addr" : "", 
-                "count" : 1,
-                "direction" : 0,
-                "height" : -1,
-                "index" : -1
+                "status": 1,
+                "addr": "", 
+                "count": 1,
+                "direction": 0,
+                "height": -1,
+                "index": -1
             }
         }
     ]
@@ -680,59 +677,59 @@ data|string|是|提案ID，即PropProject的交易hash
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|status|int32|是|提案状态|
+|status|int32|是|提案状态, 1:提案申请状态, 2:提案撤销状态, 3:董事会投票状态, 4:全体持票人投票状态, 5:提案结束状态|
 |addr|string|否|提案地址|
 |count|int32|是|查询数量|
-|direction|int32|是|查询方向，0降序 1升序|
+|direction|int32|是|查询方向, 0:降序, 1:升序|
 |height|int64|否|查询量大翻页查询时候需要输入从某个高度开始|
 |index|int32|否|查询量大翻页查询时候需要输入从某个index开始|
-
-* status 1-提案状态 2-提案撤销状态 3-董事会投票状态 4-全体持票人投票状态 5-提案结束状态
 
 **响应报文：**
 ```json
 {
-  "id": int32,
-  "result": {
-      "propProjects" : [
-        {
-            "propProject": {
-                "year" : 2019,
-                "month" : 8,
-                "day" : 29,
-                "projects" : ["14KEKbYtKKQm4wMthSK9J4La4nAiidGozt", "1EbDHAXpoiewjPLX9uqoz38HsKqMXayZrF", "1KcCVZLSQYRUwE5EXTsAoQs9LuJW6xwfQa"],
-                "startBlockHeight" : 100,
-                "endBlockHeight" : 1000
-            },
-            "curRule": {
-                "boardApproveRatio" : 66,
-                "pubOpposeRatio" : 33,
-                "proposalAmount" : 10000000,
-                "largeProjectAmount" : 100000000,
-                "publicPeriod" : 120960
-            },
-            "boards" : ["", "", ""],
-            "boardVoteRes": {
-                "totalVotes" : 30,
-                "approveVotes" : 20,
-                "opposeVotes" : 10,
-                "pass" : true
-            },
-            "pubVote" : {
-                "publicity" : true,
-                "totalVotes" : 100,
-                "opposeVotes" : 10,
-                "pubPass" : true
-            },
-            "status" : 1,
-            "address" : "1EDnnePAZN48aC2hiTDzhkczfF39g1pZZX",
-            "height" : 100,
-            "index" : 1,
-            "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
-        }
-      ]
-  },
-  "error": null
+    "id": int32,
+    "result": {
+        "propProjects": [
+            {
+                "propProject": {
+                    "year": 2019,
+                    "month": 8,
+                    "day": 29,
+                    "projects": ["14KEKbYtKKQm4wMthSK9J4La4nAiidGozt", "1EbDHAXpoiewjPLX9uqoz38HsKqMXayZrF", "1KcCVZLSQYRUwE5EXTsAoQs9LuJW6xwfQa"],
+                    "startBlockHeight": 100,
+                    "endBlockHeight": 1000
+                },
+                "curRule": {
+                    "boardApproveRatio": 66,
+                    "pubOpposeRatio": 33,
+                    "proposalAmount": 10000000,
+                    "largeProjectAmount": 100000000,
+                    "publicPeriod": 120960,
+                    "pubAttendRatio": 80,
+                    "pubApproveRatio": 70
+                },
+                "boards": ["", "", ""],
+                "boardVoteRes": {
+                    "totalVotes": 30,
+                    "approveVotes": 20,
+                    "opposeVotes": 10,
+                    "pass": true
+                },
+                "pubVote": {
+                    "publicity": true,
+                    "totalVotes": 100,
+                    "opposeVotes": 10,
+                    "pubPass": true
+                },
+                "status": 1,
+                "address": "1EDnnePAZN48aC2hiTDzhkczfF39g1pZZX",
+                "height": 100,
+                "index": 1,
+                "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+            }
+        ]
+    },
+    "error": null
 }
 ```
 **参数说明：**
@@ -741,6 +738,8 @@ data|string|是|提案ID，即PropProject的交易hash
 |----|----|----|----|
 |propProject|json|参见(1)|
 |curRule.boardApproveRatio|int32|董事会赞成率|
+|curRule.pubAttendRatio|int32|全体持票人参与率|
+|curRule.pubApproveRatio|int32|全体持票人赞成率|
 |curRule.pubOpposeRatio|int32|全体持票人否决率|
 |curRule.proposalAmount|int64|提案金|
 |curRule.largeProjectAmount|int64|重大项目阈值|
@@ -749,11 +748,11 @@ data|string|是|提案ID，即PropProject的交易hash
 |boardVoteRes.totalVotes|int32|总票数|
 |boardVoteRes.approveVotes|int32|赞成票|
 |boardVoteRes.opposeVotes|int32|反对票|
-|boardVoteRes.pass|bool|是否通过，true-通过 false-未通过|
+|boardVoteRes.pass|bool|是否通过, true:通过, false:未通过|
 |pubVote.publicity|int32|全体持票数|
 |pubVote.totalVotes|int32|赞成票|
-|pubVote.opposeVotes|int32|反对票，反对票率决定是否通过|
-|pubVote.pubPass|bool|最总是否通过，true-通过 false-未通过|
+|pubVote.opposeVotes|int32|反对票, 反对票率决定是否通过|
+|pubVote.pubPass|bool|最总是否通过, true:通过, false:未通过|
 |status|int32|提案状态|
 |address|string|提案地址|
 |height|int64|提案高度|
@@ -761,7 +760,7 @@ data|string|是|提案ID，即PropProject的交易hash
 |proposalID|string|提案ID|
 
 ## 3 提案系统参数修改
-### 3.1 proposal rule
+### 3.1 提案系统参数修改 PropRule
 
 **请求报文：**
 ```json
@@ -773,19 +772,21 @@ data|string|是|提案ID，即PropProject的交易hash
             "execer": "autonomy",
             "actionName": "PropRule",
             "payload": {
-                "year" : 2019,
-                "month" : 8,
-                "day" : 29,
-                "ruleCfg" : {
-                    "boardApproveRatio" : 66,
-                    "pubOpposeRatio" : 33,
-                    "proposalAmount" : 10000000,
-                    "largeProjectAmount" : 100000000,
-                    "publicPeriod" : 120960
+                "year": 2019,
+                "month": 8,
+                "day": 29,
+                "ruleCfg": {
+                    "boardApproveRatio": 66,
+                    "pubOpposeRatio": 33,
+                    "proposalAmount": 10000000,
+                    "largeProjectAmount": 100000000,
+                    "publicPeriod": 120960,
+                    "pubAttendRatio": 80,
+                    "pubApproveRatio": 70
                 },
-                "startBlockHeight" : 100,
-                "endBlockHeight" : 1000,
-                "realEndBlockHeight" : 0
+                "startBlockHeight": 100,
+                "endBlockHeight": 1000,
+                "realEndBlockHeight": 0
             }
         }    
     ]
@@ -799,15 +800,15 @@ data|string|是|提案ID，即PropProject的交易hash
 |month|int32|否|提案月|
 |day|int32|否|提案日|
 |ruleCfg.boardApproveRatio|int32|否|董事会赞成率|
+|ruleCfg.pubAttendRatio|int32|否|全体持票人参与率|
+|ruleCfg.pubApproveRatio|int32|否|全体持票人赞成率|
 |ruleCfg.pubOpposeRatio|int32|否|全体持票人否决率|
 |ruleCfg.proposalAmount|int64|否|提案金|
 |ruleCfg.largeProjectAmount|int64|否|重大项目阈值|
 |ruleCfg.publicPeriod|int32|否|公示期|
 |startBlockHeight|int64|是|开始投票高度|
-|endBlockHeight|int64|是|结束投票高度|
-|realEndBlockHeight|int64|否|实际投票高度，不需要填写|
-
-* endBlockHeight > startBlockHeight + 720 (自治系统中所有涉及提案都需要满足)
+|endBlockHeight|int64|是|结束投票高度, endBlockHeight > startBlockHeight + 720 (自治系统中所有涉及提案都需要满足)|
+|realEndBlockHeight|int64|否|实际投票高度, 不需要填写|
 
 **响应报文：**
 ```json
@@ -823,7 +824,7 @@ data|string|是|提案ID，即PropProject的交易hash
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 3.2 revoke proposal rule
+### 3.2 撤销提案系统参数修改 RvkPropRule
 
 **请求报文：**
 ```json
@@ -835,7 +836,7 @@ data|string|是|提案ID，即PropProject的交易hash
             "execer": "autonomy",
             "actionName": "RvkPropRule",
             "payload": {
-                "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+                "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
             }
         }
     ]
@@ -845,7 +846,7 @@ data|string|是|提案ID，即PropProject的交易hash
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|proposalID|string|是|提案ID，即PropRule的交易hash|
+|proposalID|string|是|提案ID, 即PropRule的交易hash|
 
 **响应报文：**
 ```json
@@ -861,7 +862,7 @@ data|string|是|提案ID，即PropProject的交易hash
 |----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 3.3 vote proposal rule
+### 3.3 投票提案系统参数修改 VotePropRule
 
 **请求报文：**
 ```json
@@ -873,8 +874,8 @@ data|string|是|提案ID，即PropProject的交易hash
             "execer": "autonomy",
             "actionName": "VotePropRule",
             "payload": {
-                "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd",
-                "approve": true,
+                "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd",
+                "vote": 1,
                 "originAddr": ["14KEKbYtKKQm4wMthSK9J4La4nAiidGozt", "1EbDHAXpoiewjPLX9uqoz38HsKqMXayZrF", "1KcCVZLSQYRUwE5EXTsAoQs9LuJW6xwfQa"]
             }
         }
@@ -885,8 +886,8 @@ data|string|是|提案ID，即PropProject的交易hash
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|proposalID|string|是|提案ID，即PropRule的交易hash|
-|approve|bool|是|是否同意该提案，true：同意；false: 不同意|
+|proposalID|string|是|提案ID, 即PropRule的交易hash|
+|vote|int32|是|投票提案, 1:赞成, 2:反对, 3:弃权|
 |originAddr|[]string|否|如果有绑定挖矿的可以将挖矿地址填入进行投票|
 
 **响应报文：**
@@ -903,7 +904,7 @@ data|string|是|提案ID，即PropProject的交易hash
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 3.4 terminate proposal rule
+### 3.4 终止提案系统参数修改 TmintPropRule
 
 **请求报文：**
 ```json
@@ -915,7 +916,7 @@ data|string|是|提案ID，即PropProject的交易hash
             "execer": "autonomy",
             "actionName": "TmintPropRule",
             "payload": {
-                "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+                "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
             }
         }
     ]
@@ -925,7 +926,7 @@ data|string|是|提案ID，即PropProject的交易hash
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|proposalID|string|是|提案ID，即PropRule的交易hash|
+|proposalID|string|是|提案ID, 即PropRule的交易hash|
 
 **响应报文：**
 ```json
@@ -941,9 +942,9 @@ data|string|是|提案ID，即PropProject的交易hash
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 3.5 query proposal rule
+### 3.5 查询提案
 
-#### 3.5.1 通过proposalID查询提案
+#### 3.5.1 通过 proposalID 查询提案 GetProposalRule
 
 **请求报文：**
 ```json
@@ -954,7 +955,7 @@ data|string|是|提案ID，即PropProject的交易hash
             "execer": "autonomy",
             "funcName": "GetProposalRule",
             "payload": {
-                "data" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+                "data": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
             }
         }
     ]
@@ -964,9 +965,9 @@ data|string|是|提案ID，即PropProject的交易hash
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|data|string|是|提案ID，即PropRule的交易hash|
+|data|string|是|提案ID, 即PropRule的交易hash|
 
-#### 3.5.2 通过状态或者地址以及状态地址查询提案
+#### 3.5.2 通过状态或者地址以及状态地址查询提案 ListProposalRule
 
 **请求报文：**
 ```json
@@ -977,12 +978,12 @@ data|string|是|提案ID，即PropProject的交易hash
             "execer": "autonomy",
             "funcName": "ListProposalRule",
             "payload": {
-                "status" : 1,
-                "addr" : "", 
-                "count" : 1,
-                "direction" : 0,
-                "height" : -1,
-                "index" : -1
+                "status": 1,
+                "addr": "", 
+                "count": 1,
+                "direction": 0,
+                "height": -1,
+                "index": -1
             }
         }
     ]
@@ -992,59 +993,61 @@ data|string|是|提案ID，即PropProject的交易hash
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|status|int32|是|提案状态|
+|status|int32|是|提案状态, 1:提案申请状态, 2:提案撤销状态, 3:提案投票状态, 4:提案结束状态|
 |addr|string|否|提案地址|
 |count|int32|是|查询数量|
-|direction|int32|是|查询方向，0降序 1升序|
+|direction|int32|是|查询方向, 0:降序, 1:升序|
 |height|int64|否|查询量大翻页查询时候需要输入从某个高度开始|
 |index|int32|否|查询量大翻页查询时候需要输入从某个index开始|
-
-* status 1-提案状态 2-提案撤销状态 3-投票状态 4-提案结束状态
 
 **响应报文：**
 ```json
 {
-  "id": int32,
-  "result": {
-      "propRules" : [
-        {
-            "propRule": {
-                "year" : 2019,
-                "month" : 8,
-                "day" : 29,
-                "ruleCfg" : {
-                    "boardApproveRatio" : 66,
-                    "pubOpposeRatio" : 33,
-                    "proposalAmount" : 10000000,
-                    "largeProjectAmount" : 100000000,
-                    "publicPeriod" : 120960
+    "id": int32,
+    "result": {
+        "propRules": [
+            {
+                "propRule": {
+                    "year": 2019,
+                    "month": 8,
+                    "day": 29,
+                    "ruleCfg": {
+                        "boardApproveRatio": 66,
+                        "pubOpposeRatio": 33,
+                        "proposalAmount": 10000000,
+                        "largeProjectAmount": 100000000,
+                        "publicPeriod": 120960,
+                        "pubAttendRatio": 80,
+                        "pubApproveRatio": 70
+                    },
+                    "startBlockHeight": 100,
+                    "endBlockHeight": 1000,
+                    "realEndBlockHeight": 900
                 },
-                "startBlockHeight" : 100,
-                "endBlockHeight" : 1000,
-                "realEndBlockHeight" : 900
-            },
-            "curRule": {
-                "boardApproveRatio" : 66,
-                "pubOpposeRatio" : 33,
-                "proposalAmount" : 10000000,
-                "largeRuleAmount" : 100000000,
-                "publicPeriod" : 120960
-            },
-            "voteResult": {
-                "totalVotes" : 100,
-                "approveVotes" : 70,
-                "opposeVotes" : 20,
-                "pass" : true
-            },
-            "status" : 1,
-            "address" : "1EDnnePAZN48aC2hiTDzhkczfF39g1pZZX",
-            "height" : 100,
-            "index" : 1,
-            "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
-        }
-      ]
-  },
-  "error": null
+                "curRule": {
+                    "boardApproveRatio": 66,
+                    "pubOpposeRatio": 33,
+                    "proposalAmount": 10000000,
+                    "largeRuleAmount": 100000000,
+                    "publicPeriod": 120960,
+                    "pubAttendRatio": 80,
+                    "pubApproveRatio": 70
+                },
+                "voteResult": {
+                    "totalVotes": 100,
+                    "approveVotes": 70,
+                    "opposeVotes": 20,
+                    "pass": true
+                },
+                "status": 1,
+                "address": "1EDnnePAZN48aC2hiTDzhkczfF39g1pZZX",
+                "height": 100,
+                "index": 1,
+                "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+            }
+        ]
+    },
+    "error": null
 }
 ```
 **参数说明：**
@@ -1056,14 +1059,14 @@ data|string|是|提案ID，即PropProject的交易hash
 |voteResult.totalVotes|int32|总票数|
 |voteResult.approveVotes|int32|赞成票|
 |voteResult.opposeVotes|int32|反对票|
-|voteResult.pass|bool|是否通过，true-通过 false-未通过|
+|voteResult.pass|bool|是否通过, true:通过, false:未通过|
 |status|int32|提案状态|
 |address|string|提案地址|
 |height|int64|提案高度|
 |index|int32|提案index|
 |proposalID|string|提案ID|
 
-### 3.6 query active rule
+### 3.6 查询有效系统参数 GetActiveRule
 
 **请求报文：**
 ```json
@@ -1074,7 +1077,7 @@ data|string|是|提案ID，即PropProject的交易hash
             "execer": "autonomy",
             "funcName": "GetActiveRule",
             "payload": {
-                "data" : "1"
+                "data": "1"
             }
         }
     ]
@@ -1089,15 +1092,17 @@ data|string|是|提案ID，即PropProject的交易hash
 **响应报文：**
 ```json
 {
-  "id": int32,
-  "result": {
-        "boardApproveRatio" : 66,
-        "pubOpposeRatio" : 33,
-        "proposalAmount" : 10000000,
-        "largeRuleAmount" : 100000000,
-        "publicPeriod" : 120960
-  },
-  "error": null
+    "id": int32,
+    "result": {
+        "boardApproveRatio": 66,
+        "pubOpposeRatio": 33,
+        "proposalAmount": 10000000,
+        "largeRuleAmount": 100000000,
+        "publicPeriod": 120960,
+        "pubAttendRatio": 80,
+        "pubApproveRatio": 70
+    },
+    "error": null
 }
 ```
 **参数说明：**
@@ -1105,13 +1110,15 @@ data|string|是|提案ID，即PropProject的交易hash
 |参数|类型|说明|
 |----|----|----|----|
 |boardApproveRatio|int32|董事会赞成率|
+|pubAttendRatio|int32|全体持票人参与率|
+|pubApproveRatio|int32|全体持票人赞成率|
 |pubOpposeRatio|int32|全体持票人否决率|
 |proposalAmount|int64|提案金|
 |largeProjectAmount|int64|重大项目阈值|
 |publicPeriod|int32|公示期|
 
 ## 4 提案董事会成员修改
-### 4.1 proposal change
+### 4.1 提案董事会成员修改 PropChange
 
 **请求报文：**
 ```json
@@ -1123,26 +1130,18 @@ data|string|是|提案ID，即PropProject的交易hash
             "execer": "autonomy",
             "actionName": "PropChange",
             "payload": {
-                "year" : 2019,
-                "month" : 8,
-                "day" : 29,
-                "changes" : [
+                "year": 2019,
+                "month": 8,
+                "day": 29,
+                "changes": [
                     {
-                        "cancel" : true,
-                         "addr" : "14KEKbYtKKQm4wMthSK9J4La4nAiidGozt"
-                    },
-                    {
-                        "cancel" : true,
-                        "addr" : "1EbDHAXpoiewjPLX9uqoz38HsKqMXayZrF"
-                    }, 
-                    {
-                        "cancel" : false,
-                        "addr" : "1KcCVZLSQYRUwE5EXTsAoQs9LuJW6xwfQa"
+                        "cancel": true,
+                         "addr": "14KEKbYtKKQm4wMthSK9J4La4nAiidGozt"
                     }
                 ],
-                "startBlockHeight" : 100,
-                "endBlockHeight" : 1000,
-                "realEndBlockHeight" : 0
+                "startBlockHeight": 100,
+                "endBlockHeight": 1000,
+                "realEndBlockHeight": 0
             }
         }    
     ]
@@ -1155,13 +1154,12 @@ data|string|是|提案ID，即PropProject的交易hash
 |year|int32|否|提案年|
 |month|int32|否|提案月|
 |day|int32|否|提案日|
-|changes.cancel|bool|是|撤销或者添加董事会，true-撤销，false-添加|
+|changes|strings|是|一个成员只允许替换一个新的, 只能填一个|
+|changes.cancel|bool|是|true, 只允许替换, 不允许恢复操作|
 |changes.addr|string|是|撤销或者添加董事会的地址|
 |startBlockHeight|int64|是|开始投票高度|
-|endBlockHeight|int64|是|结束投票高度|
-|realEndBlockHeight|int64|否|实际投票结束高度，不需要填写|
-
-* endBlockHeight > startBlockHeight + 720 (自治系统中所有涉及提案都需要满足)
+|endBlockHeight|int64|是|结束投票高度, endBlockHeight > startBlockHeight + 720 (自治系统中所有涉及提案都需要满足)|
+|realEndBlockHeight|int64|否|实际投票结束高度, 不需要填写|
 
 **响应报文：**
 ```json
@@ -1177,7 +1175,7 @@ data|string|是|提案ID，即PropProject的交易hash
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 4.2 revoke proposal change
+### 4.2 撤销提案董事会成员修改 RvkPropChange
 
 **请求报文：**
 ```json
@@ -1189,7 +1187,7 @@ data|string|是|提案ID，即PropProject的交易hash
             "execer": "autonomy",
             "actionName": "RvkPropChange",
             "payload": {
-                "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+                "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
             }
         }
     ]
@@ -1199,7 +1197,7 @@ data|string|是|提案ID，即PropProject的交易hash
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|proposalID|string|是|提案ID，即PropChange的交易hash|
+|proposalID|string|是|提案ID, 即PropChange的交易hash|
 
 **响应报文：**
 ```json
@@ -1215,7 +1213,7 @@ data|string|是|提案ID，即PropProject的交易hash
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 4.3 vote proposal change
+### 4.3 投票提案董事会成员修改 VotePropChange
 
 **请求报文：**
 ```json
@@ -1227,8 +1225,8 @@ data|string|是|提案ID，即PropProject的交易hash
             "execer": "autonomy",
             "actionName": "VotePropChange",
             "payload": {
-                "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd",
-                "approve": true
+                "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd",
+                "vote": 1
             }
         }
     ]
@@ -1238,8 +1236,8 @@ data|string|是|提案ID，即PropProject的交易hash
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|proposalID|string|是|提案ID，即PropChange的交易hash|
-|approve|bool|是|是否同意该提案，true：同意；false: 不同意|
+|proposalID|string|是|提案ID, 即PropChange的交易hash|
+|vote|bool|是|投票提案, 1:赞成, 2:反对, 3:弃权|
 
 **响应报文：**
 ```json
@@ -1255,7 +1253,7 @@ data|string|是|提案ID，即PropProject的交易hash
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 4.4 terminate proposal change
+### 4.4 终止提案董事会成员修改 TmintPropChange
 
 **请求报文：**
 ```json
@@ -1267,7 +1265,7 @@ data|string|是|提案ID，即PropProject的交易hash
             "execer": "autonomy",
             "actionName": "TmintPropChange",
             "payload": {
-                "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+                "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
             }
         }
     ]
@@ -1277,7 +1275,7 @@ data|string|是|提案ID，即PropProject的交易hash
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|proposalID|string|是|提案ID，即PropChange的交易hash|
+|proposalID|string|是|提案ID, 即PropChange的交易hash|
 
 **响应报文：**
 ```json
@@ -1293,9 +1291,9 @@ data|string|是|提案ID，即PropProject的交易hash
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 4.5 query proposal change
+### 4.5 查询提案
 
-#### 4.5.1 通过proposalID查询提案
+#### 4.5.1 通过 proposalID 查询提案 GetProposalChange
 
 **请求报文：**
 ```json
@@ -1306,7 +1304,7 @@ data|string|是|提案ID，即PropProject的交易hash
             "execer": "autonomy",
             "funcName": "GetProposalChange",
             "payload": {
-                "data" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+                "data": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
             }
         }
     ]
@@ -1316,9 +1314,9 @@ data|string|是|提案ID，即PropProject的交易hash
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|data|string|是|提案ID，即PropChange的交易hash|
+|data|string|是|提案ID, 即PropChange的交易hash|
 
-#### 4.5.2 通过状态或者地址以及状态地址查询提案
+#### 4.5.2 通过状态或者地址以及状态地址查询提案 ListProposalChange
 
 **请求报文：**
 ```json
@@ -1329,12 +1327,12 @@ data|string|是|提案ID，即PropProject的交易hash
             "execer": "autonomy",
             "funcName": "ListProposalChange",
             "payload": {
-                "status" : 1,
-                "addr" : "", 
-                "count" : 1,
-                "direction" : 0,
-                "height" : -1,
-                "index" : -1
+                "status": 1,
+                "addr": "", 
+                "count": 1,
+                "direction": 0,
+                "height": -1,
+                "index": -1
             }
         }
     ]
@@ -1344,68 +1342,58 @@ data|string|是|提案ID，即PropProject的交易hash
 
 |参数|类型|是否必须|说明|
 |----|----|----|----|
-|status|int32|是|提案状态|
+|status|int32|是|提案状态, 1:提案申请状态, 2:提案撤销状态, 3:提案投票状态, 4:提案结束状态|
 |addr|string|否|提案地址|
 |count|int32|是|查询数量|
-|direction|int32|是|查询方向，0降序 1升序|
+|direction|int32|是|查询方向, 0降序, 1升序|
 |height|int64|否|查询量大翻页查询时候需要输入从某个高度开始|
 |index|int32|否|查询量大翻页查询时候需要输入从某个index开始|
-
-* status 1-提案状态 2-提案撤销状态 3-投票状态 4-提案结束状态
 
 **响应报文：**
 ```json
 {
   "id": int32,
   "result": {
-      "propChanges" : [
+      "propChanges": [
         {
             "propChange": {
-                "year" : 2019,
-                "month" : 8,
-                "day" : 29,
-                "changes" : [
+                "year": 2019,
+                "month": 8,
+                "day": 29,
+                "changes": [
                     {
-                        "cancel" : true,
-                         "addr" : "14KEKbYtKKQm4wMthSK9J4La4nAiidGozt"
-                    },
-                    {
-                        "cancel" : true,
-                        "addr" : "1EbDHAXpoiewjPLX9uqoz38HsKqMXayZrF"
-                    }, 
-                    {
-                        "cancel" : false,
-                        "addr" : "1KcCVZLSQYRUwE5EXTsAoQs9LuJW6xwfQa"
+                        "cancel": true,
+                         "addr": "14KEKbYtKKQm4wMthSK9J4La4nAiidGozt"
                     }
                 ],
-                "startBlockHeight" : 100,
-                "endBlockHeight" : 1000,
-                "realEndBlockHeight" : 900
+                "startBlockHeight": 100,
+                "endBlockHeight": 1000,
+                "realEndBlockHeight": 900
             },
             "curRule": {
-                "changeApproveRatio" : 66,
-                "pubOpposeRatio" : 33,
-                "proposalAmount" : 10000000,
-                "largeProjectAmount" : 100000000,
-                "publicPeriod" : 120960
+                "changeApproveRatio": 66,
+                "pubOpposeRatio": 33,
+                "proposalAmount": 10000000,
+                "largeProjectAmount": 100000000,
+                "publicPeriod": 120960
             },
-            "board" : {
-                "boards" : ["12cjnN5D4DPdBQSwh6vjwJbtsW4EJALTMv","1Luh4AziYyaC5zP3hUXtXFZS873xAxm6rH"],
-                "revboards" : ["1NNaYHkscJaLJ2wUrFNeh6cQXBS4TrFYeB"],
-                "amount" : 10000000,
-                "startHeight" : 100
+            "board": {
+                "boards": ["12cjnN5D4DPdBQSwh6vjwJbtsW4EJALTMv","1Luh4AziYyaC5zP3hUXtXFZS873xAxm6rH"],
+                "revboards": ["1NNaYHkscJaLJ2wUrFNeh6cQXBS4TrFYeB"],
+                "amount": 10000000,
+                "startHeight": 100
             },
             "voteResult": {
-                "totalVotes" : 100,
-                "approveVotes" : 70,
-                "opposeVotes" : 20,
-                "pass" : true
+                "totalVotes": 100,
+                "approveVotes": 70,
+                "opposeVotes": 20,
+                "pass": true
             },
-            "status" : 1,
-            "address" : "1EDnnePAZN48aC2hiTDzhkczfF39g1pZZX",
-            "height" : 100,
-            "index" : 1,
-            "proposalID" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+            "status": 1,
+            "address": "1EDnnePAZN48aC2hiTDzhkczfF39g1pZZX",
+            "height": 100,
+            "index": 1,
+            "proposalID": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
         }
       ]
     },
@@ -1429,7 +1417,7 @@ data|string|是|提案ID，即PropProject的交易hash
 |voteResult.totalVotes|int32|总票数|
 |voteResult.approveVotes|int32|赞成票|
 |voteResult.opposeVotes|int32|反对票|
-|voteResult.pass|bool|是否通过，true-通过 false-未通过|
+|voteResult.pass|bool|是否通过, true:通过, false:未通过|
 |status|int32|提案状态|
 |address|string|提案地址|
 |height|int64|提案高度|
@@ -1437,7 +1425,7 @@ data|string|是|提案ID，即PropProject的交易hash
 |proposalID|string|提案ID|
 
 ## 5 评论提案
-### 5.1 comment proposal
+### 5.1 评论提案 CommentProp
 
 **请求报文：**
 ```json
@@ -1447,11 +1435,11 @@ data|string|是|提案ID，即PropProject的交易hash
     "params": [
         {
             "execer": "autonomy",
-            "actionName": "PropBoard",
+            "actionName": "CommentProp",
             "payload": {
-                "proposalID" : "",
-                "repHash" : "",
-                "comment" : ""
+                "proposalID": "",
+                "repHash": "",
+                "comment": ""
             }
         }
     
@@ -1481,9 +1469,7 @@ data|string|是|提案ID，即PropProject的交易hash
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 5.2 query proposal comment
-
-通过提案ID查询所对应评论
+### 5.2 通过提案 ID 查询所对应评论 ListProposalComment
 
 **请求报文：**
 ```json
@@ -1494,11 +1480,11 @@ data|string|是|提案ID，即PropProject的交易hash
             "execer": "autonomy",
             "funcName": "ListProposalComment",
             "payload": {
-                "proposalID" : "", 
-                "count" : 1,
-                "direction" : 0,
-                "height" : -1,
-                "index" : -1
+                "proposalID": "", 
+                "count": 1,
+                "direction": 0,
+                "height": -1,
+                "index": -1
             }
         }
     ]
@@ -1510,26 +1496,26 @@ data|string|是|提案ID，即PropProject的交易hash
 |----|----|----|----|
 |proposalID|string|否|提案ID|
 |count|int32|是|查询数量|
-|direction|int32|是|查询方向，0降序 1升序|
+|direction|int32|是|查询方向, 0:降序, 1:升序|
 |height|int64|否|查询量大翻页查询时候需要输入从某个高度开始|
 |index|int32|否|查询量大翻页查询时候需要输入从某个index开始|
 
 **响应报文：**
 ```json
 {
-  "id": int32,
-  "result": {
-      "rltCmt" : [
-        {
-            "repHash" : "",
-            "comment" : "",
-            "height" : 100,
-            "index" : 1,
-            "hash" : "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
-        }
-      ]
-  },
-  "error": null
+    "id": int32,
+    "result": {
+        "rltCmt": [
+            {
+                "repHash": "",
+                "comment": "",
+                "height": 100,
+                "index": 1,
+                "hash": "0x5047974ad5b275d5173367b76cea1d9509fd669e266c8456a1c12f14b347e7dd"
+            }
+        ]
+    },
+    "error": null
 }
 ```
 **参数说明：**

@@ -43,11 +43,11 @@ superManager=["14KEKbYtKKQm4wMthSK9J4La4nAiidGozt"]
 
 ## 搭建单节点主链
 - windows
-1.在软件包解压目录打开windows终端，执行启动命令。
+1.在软件包解压目录打开windows终端，执行启动命令，启动后会一直打印日志。
 ```bash
 chain33.exe -f chain33.solo.toml
 ```
-2.执行以下命令查询主链网络信息，判断单节点主链是否创建成功。
+2.在软件包解压目录下重新打开windows终端，执行以下命令查询主链网络信息，判断单节点主链是否创建成功。
 ```bash
 chain33-cli.exe net peer
 ```
@@ -80,15 +80,21 @@ chain33-cli.exe net peer
 
 
 - linux
-1.打开终端，进入到软件包解压目录，执行启动命令。
+1.打开终端，上传软件包。
+2.解压上传的软件包，并进入到软件包解压目录。
+```bash
+tar -zxvf chain33_solo_linux_0670237.tar.gz
+cd chain33_solo_linux_0670237
+```
+3.执行启动命令。
 ```bash
 nohup ./chain33 -f chain33.solo.toml >/dev/null 2>&1 &
 ```
-2.执行命令，查看进程。
+4.执行命令，查看进程。
 ```bash
 ps -ef | grep -v grep | grep chain33
 ```
-3.如果进程已经启动，执行命令查询主链网络信息。
+5.如果进程已经启动，执行命令查询主链网络信息。
 ```bash
 ./chain33-cli net peer
 ```
