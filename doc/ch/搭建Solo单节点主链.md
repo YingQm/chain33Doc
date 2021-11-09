@@ -8,7 +8,8 @@ Solo单节点共识机制，是一个简单易部署的但只能用于非生产�
 ## 下载软件包
 下载单节点solo测试链软件包: [资源下载](https://chain.33.cn/resource)
 
-根据操作系统，下载对应版本的软件包，再解压到任意指定目录。软件包包含以下文件：
+根据操作系统，下载对应版本的软件包，再解压到任意指定目录。
+软件包包含以下文件：
 ```text
 # window版本下包含：
 chain33.exe       -- chain33节点程序
@@ -42,7 +43,7 @@ superManager=["14KEKbYtKKQm4wMthSK9J4La4nAiidGozt"]
 ```
 
 ## 搭建单节点主链
-- windows
+**windows**
 1.在软件包解压目录打开windows终端，执行启动命令，启动后会一直打印日志。
 ```bash
 chain33.exe -f chain33.solo.toml
@@ -79,22 +80,20 @@ chain33-cli.exe net peer
 如果执行出错，请检查`logs/chain33.log`文件中的错误信息。
 
 
-- linux
-1.打开终端，上传软件包。
-2.解压上传的软件包，并进入到软件包解压目录。
+**linux**
+1.在节点服务器中，解压软件包。
 ```bash
 tar -zxvf chain33_solo_linux_0670237.tar.gz
-cd chain33_solo_linux_0670237
 ```
-3.执行启动命令。
+2.在软件包解压缩目录中，执行启动命令。
 ```bash
 nohup ./chain33 -f chain33.solo.toml >/dev/null 2>&1 &
 ```
-4.执行命令，查看进程。
+3.执行命令，查看进程。
 ```bash
 ps -ef | grep -v grep | grep chain33
 ```
-5.如果进程已经启动，执行命令查询主链网络信息。
+4.执行命令，查询主链网络信息，判断单节点主链是否创建成功。
 ```bash
 ./chain33-cli net peer
 ```
