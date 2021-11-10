@@ -383,7 +383,7 @@ payload携带的内容格式如下：
 |参数|类型|是否必填|说明|
 |----|----|----|----|
 |abi|string|是|合约abi|
-|parameter|string|是|查询的参数信息|
+|methodName|string|是|方法名称|
 |data|string|是|需要 Unpack 的数据|
 
 **响应报文<!--[dapp/evm/types/EvmGetUnpackDataRespose]-->：**
