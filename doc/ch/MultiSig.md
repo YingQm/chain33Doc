@@ -1,19 +1,19 @@
-# 多重签名合约：
+## 多重签名
 [TOC]
-## 1 多重签名合约功能：
-### 1.1 多重签名账户的创建
+### 1 多重签名合约功能：
+#### 1.1 多重签名账户的创建
    。需要设置默认的owner以及权重，指定资产的每日限额，请求权重的值
-### 1.2 多重签名账户属性的修改
+#### 1.2 多重签名账户属性的修改
    。owner的add/del/modify/replace
    。资产每日限额的修改
    。请求权重的修改
-### 1.3 多重签名账户的转账
+#### 1.3 多重签名账户的转账
    。转入时，to地址必须是多重签名地址，from地址必须是非多重签名地址；
    。转出时，from地址必须是多重签名地址，to地址必须是非多重签名地址； 传出交易需要校验权重
 
-## 2 多重签名合约命令行
+### 2 多重签名合约命令行
 
-### 2.1 多重签名合约命令行说明
+#### 2.1 多重签名合约命令行说明
 
 **account**
 ```
@@ -55,7 +55,7 @@ Available Commands:
   txids            get multisig txids
 ```
 
-### 2.2 多重签名合约命令行示例
+#### 2.2 多重签名合约命令行示例
 ```
 1. 创建多重签名账户：根据txhash生成一个多重签名账户地址multisig-addr
    cli send multisig account create -d 10 -e coins -s BTY -a "owner-1 owner-2" -w "20 10" -r 15 -k private-key
@@ -124,11 +124,11 @@ Available Commands:
    cli  multisig account owner -a 166po3ghRbRu53hu8jBBQzddp7kUJ9Ynyf
 ```
 
-## 3 多重签名合约RPC接口说明
+### 3 多重签名合约RPC接口说明
 
-### 3.1 account
+#### 3.1 account
 
-#### 3.1.1 创建多重签名账户（未签名） MultiSigAccCreateTx
+##### 3.1.1 创建多重签名账户（未签名） MultiSigAccCreateTx
 
 **请求报文<!--[dapp/multisig/types/MultiSigAccCreate]-->：**
 
@@ -170,7 +170,7 @@ Available Commands:
 |----|----|----|
 |result|string|返回交易十六进制编码后的字符串|
 
-#### 3.1.2 多重签名账户修改RequiredWeight值（未签名） MultiSigAccOperateTx
+##### 3.1.2 多重签名账户修改RequiredWeight值（未签名） MultiSigAccOperateTx
 
 **请求报文<!--[dapp/multisig/types/MultiSigAccOperate]-->：**
 
@@ -212,7 +212,7 @@ Available Commands:
 |----|----|----|
 |result|string|返回交易十六进制编码后的字符串|
 
-#### 3.1.3 多重签名账户修改DailyLimit每日限额(未签名) MultiSigAccOperateTx
+##### 3.1.3 多重签名账户修改DailyLimit每日限额(未签名) MultiSigAccOperateTx
 
 **请求报文<!--[dapp/multisig/types/MultiSigAccOperate]-->：**
 
@@ -257,7 +257,7 @@ Available Commands:
 |result|string|返回交易十六进制编码后的字符串|
 
 
-#### 3.1.4 获取已经创建的多重签名账户个数 MultiSigAccCount
+##### 3.1.4 获取已经创建的多重签名账户个数 MultiSigAccCount
 
 **请求报文<!--[types/ReqNil]-->：**
 
@@ -298,7 +298,7 @@ Available Commands:
 |data|int64|多重签名账户个数|
 
 
-#### 3.1.5 获取多重签名地址 MultiSigAccounts
+##### 3.1.5 获取多重签名地址 MultiSigAccounts
 
 **请求报文<!--[dapp/multisig/types/ReqMultiSigAccs]-->：**
 
@@ -343,8 +343,7 @@ Available Commands:
 |----|----|----|
 |address|[]string|多重签名账户地址列表|
 
-
-#### 3.1.6 获取多重签名账户信息 MultiSigAccountInfo
+##### 3.1.6 获取多重签名账户信息 MultiSigAccountInfo
 
 **请求报文<!--[dapp/multisig/types/ReqMultiSigAccInfo]-->：**
 
@@ -416,7 +415,7 @@ Available Commands:
 |txCount|uint64|本多重签名账户上的交易数量|
 |requiredWeight|uint64|本多重签名账户执行交易需要的权重|
 
-#### 3.1.7 查询多重签名账户指定资产当日免密余额 MultiSigAccUnSpentToday
+##### 3.1.7 查询多重签名账户指定资产当日免密余额 MultiSigAccUnSpentToday
 
 **请求报文<!--[dapp/multisig/types/ReqAccAssets]-->：**
 
@@ -473,8 +472,7 @@ Available Commands:
 |symbol|string|本多重签名账户资产标识|
 |amount|uint64|本多重签名账户指定资产当日免密余额|
 
-
-#### 3.1.8 查询多重签名账户指定资产信息 MultiSigAccAssets
+##### 3.1.8 查询多重签名账户指定资产信息 MultiSigAccAssets
 
 **请求报文<!--[dapp/multisig/types/ReqAccAssets]-->：**
 
@@ -542,7 +540,7 @@ Available Commands:
 |recvAmount|uint64|查询账户收到此资产的所有值|
 
 
-#### 3.1.9 查询指定地址创建的多重签名账户列表 MultiSigAccAllAddress
+##### 3.1.9 查询指定地址创建的多重签名账户列表 MultiSigAccAllAddress
 
 **请求报文<!--[dapp/multisig/types/ReqMultiSigAccInfo]-->：**
 
@@ -584,7 +582,7 @@ Available Commands:
 |----|----|----|
 |address|string|多重签名账户地址列表|
 
-#### 3.1.10 查询owner地址拥有的多重签名账户列表 MultiSigAddresList
+##### 3.1.10 查询owner地址拥有的多重签名账户列表 MultiSigAddresList
 
 **请求报文<!--[types/ReqString]-->：**
 
@@ -630,9 +628,9 @@ Available Commands:
 |weight|uint64|owner地址在此多重签名账户中的权重|
 
 
-### 3.2 owner
+#### 3.2 owner
 
-#### 3.2.1 多重签名账户增加owner（未签名） MultiSigOwnerOperateTx
+##### 3.2.1 多重签名账户增加owner（未签名） MultiSigOwnerOperateTx
 
 **请求报文<!--[dapp/multisig/types/MultiSigOwnerOperate]-->：**
 
@@ -678,7 +676,7 @@ Available Commands:
 |result|string|返回交易十六进制编码后的字符串|
 
 
-#### 3.2.2 多重签名账户删除owner（未签名） MultiSigOwnerOperateTx
+##### 3.2.2 多重签名账户删除owner（未签名） MultiSigOwnerOperateTx
 
 **请求报文<!--[dapp/multisig/types/MultiSigOwnerOperate]-->：**
 
@@ -723,7 +721,7 @@ Available Commands:
 |result|string|返回交易十六进制编码后的字符串|
 
 
-#### 3.2.3 多重签名账户owner权重修改（未签名） MultiSigOwnerOperateTx
+##### 3.2.3 多重签名账户owner权重修改（未签名） MultiSigOwnerOperateTx
 
 **请求报文<!--[dapp/multisig/types/MultiSigOwnerOperate]-->：**
 
@@ -768,7 +766,7 @@ Available Commands:
 ---|---|---
 result|string|返回交易十六进制编码后的字符串
 
-#### 3.2.4 多重签名账户owner替换（未签名） MultiSigOwnerOperateTx
+##### 3.2.4 多重签名账户owner替换（未签名） MultiSigOwnerOperateTx
 
 **请求报文<!--[dapp/multisig/types/MultiSigOwnerOperate]-->：**
 
@@ -813,9 +811,9 @@ result|string|返回交易十六进制编码后的字符串
 |----|----|----|
 |result|string|返回交易十六进制编码后的字符串|
 
-### 3.3 tx
+#### 3.3 tx
 
-#### 3.3.1 多重签名账户资产转入（未签名） MultiSigAccTransferInTx
+##### 3.3.1 多重签名账户资产转入（未签名） MultiSigAccTransferInTx
 
 **请求报文<!--[dapp/multisig/types/MultiSigExecTransferTo]-->：**
 
@@ -861,7 +859,7 @@ result|string|返回交易十六进制编码后的字符串
 |----|----|----|
 |result|string|返回交易十六进制编码后的字符串|
 
-#### 3.3.2 多重签名账户资产转出（未签名） MultiSigAccTransferOutTx
+##### 3.3.2 多重签名账户资产转出（未签名） MultiSigAccTransferOutTx
 
 **请求报文<!--[dapp/multisig/types/MultiSigExecTransferFrom]-->：**
 
@@ -909,7 +907,7 @@ result|string|返回交易十六进制编码后的字符串
 |----|----|----|
 |result|string|返回交易十六进制编码后的字符串|
 
-#### 3.3.3 多重签名账户交易确认（未签名） MultiSigConfirmTx
+##### 3.3.3 多重签名账户交易确认（未签名） MultiSigConfirmTx
 
 **请求报文<!--[dapp/multisig/types/MultiSigConfirmTx]-->：**
 
@@ -951,7 +949,7 @@ result|string|返回交易十六进制编码后的字符串
 |----|----|----|
 |result|string|返回交易十六进制编码后的字符串|
 
-#### 3.3.4 获取多重签名账户交易数 MultiSigAccTxCount
+##### 3.3.4 获取多重签名账户交易数 MultiSigAccTxCount
 
 **请求报文<!--[dapp/multisig/types/ReqMultiSigAccInfo]-->：**
 
@@ -994,7 +992,7 @@ result|string|返回交易十六进制编码后的字符串
 |data|int64|多重签名账户地址个数|
 
 
-#### 3.3.5 获取指定区间的指定状态的多重签名交索引易 MultiSigTxids
+##### 3.3.5 获取指定区间的指定状态的多重签名交索引易 MultiSigTxids
 
 **请求报文<!--[dapp/multisig/types/ReqMultiSigTxids]-->：**
 
@@ -1049,7 +1047,7 @@ result|string|返回交易十六进制编码后的字符串
 |txids|[]uint64|多重签名账户交易索引|
 
 
-#### 3.3.6 获取多重签名交信息 MultiSigTxInfo
+##### 3.3.6 获取多重签名交信息 MultiSigTxInfo
 
 **请求报文<!--[dapp/multisig/types/ReqMultiSigTxInfo]-->：**
 
@@ -1111,9 +1109,7 @@ result|string|返回交易十六进制编码后的字符串
 |ownerAddr|string|多重签名账户owner地址|
 |weight|uint64|多重签名账户owner权重|
 
-
-
-#### 3.3.7 获取指定交易被确认的权重信息 MultiSigTxConfirmedWeight
+##### 3.3.7 获取指定交易被确认的权重信息 MultiSigTxConfirmedWeight
 
 **请求报文<!--[dapp/multisig/types/ReqMultiSigTxInfo]-->：**
 

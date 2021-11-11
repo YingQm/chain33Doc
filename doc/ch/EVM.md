@@ -1,9 +1,9 @@
-## 1 EVM 接口
+## EVM 接口
 EVM的接口主要是用来完成创建交易（包括部署合约交易和调用合约交易），估算调用交易需要支付的gas（gas会在执行时，通过支付交易费1:1进行兑换；以及相关查询。
 
 [TOC]
 
-### 1.1 估算部署交易或者调用交易需要的gas
+### 1 估算部署交易或者调用交易需要的gas
 **请求报文<!--[dapp/evm/types/EstimateGas]-->：**
 ```json
 {
@@ -52,7 +52,7 @@ payload携带的内容格式如下：
 |----|----|----|
 |gas|string|估算需要的gas数值|
 
-### 1.2 创建部署合约交易 CreateDeployTx
+### 2 创建部署合约交易 CreateDeployTx
 **请求报文<!--[dapp/evm/types/EvmContractCreateReq]-->：**
 ```json
 {
@@ -103,7 +103,7 @@ payload携带的内容格式如下：
 |----|----|----|
 |data|string|创建的交易数据|
 
-### 1.3 创建调用合约交易 CreateCallTx
+### 3 创建调用合约交易 CreateCallTx
 **请求报文<!--[dapp/evm/types/EvmContractCallReq]-->：**
 ```json
 {
@@ -152,7 +152,7 @@ payload携带的内容格式如下：
 |----|----|----|
 |data|string|创建的交易数据|
 
-### 1.4 获取合约地址 CalcNewContractAddr
+### 4 获取合约地址 CalcNewContractAddr
 **请求报文<!--[dapp/evm/types/EvmContractCreateReq]-->：**
 ```json
 {
@@ -190,7 +190,7 @@ payload携带的内容格式如下：
 |----|----|----|
 |result|string|合约地址|
 
-### 1.5 查询合约地址是否存在 CheckAddrExists
+### 5 查询合约地址是否存在 CheckAddrExists
 **请求报文<!--[dapp/evm/types/CheckEVMAddrReq]-->：**
 ```json
 {
@@ -243,8 +243,8 @@ payload携带的内容格式如下：
 |contractName|string|合约名称|
 |aliasName|string|合约别名|
 
-### 1.6 查询合约信息 GetPackData Query GetUnpackData
-#### 1.6.1 GetPackData
+### 6 查询合约信息 GetPackData Query GetUnpackData
+#### 6.1 GetPackData
 **请求报文<!--[dapp/evm/types/EvmGetPackDataReq]-->：**
 ```json
 {
@@ -293,7 +293,7 @@ payload携带的内容格式如下：
 |----|----|----|
 |packData|string|需要查询的信息 pack 后的数据|
 
-#### 1.6.2 Query
+#### 6.2 Query
 **请求报文<!--[dapp/evm/types/EvmQueryReq]-->：**
 ```json
 {
@@ -352,7 +352,7 @@ payload携带的内容格式如下：
 |rawData|string|查询到的结果|
 |jsonData|string|json数据|
 
-#### 1.6.3 GetUnpackData
+#### 6.3 GetUnpackData
 **请求报文<!--[dapp/evm/types/EvmGetUnpackDataReq]-->：**
 ```json
 {

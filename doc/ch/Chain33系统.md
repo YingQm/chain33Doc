@@ -1,7 +1,7 @@
-## 1 Chain33系统接口
+## Chain33系统接口
 [TOC]
 
-### 1.1 获取远程节点列表 GetPeerInfo
+### 1 获取远程节点列表 GetPeerInfo
 **请求报文<!--[types/ReqNil]-->：**
 ```json
 {
@@ -59,7 +59,7 @@
 |self|bool|是否为当前节点（执行查询命令的节点）|
 |header|-|节点最新区块头信息|
 
-### 1.2 查询节点状态 GetNetInfo
+### 2 查询节点状态 GetNetInfo
 **请求报文<!--[types/ReqNil]-->：**
 ```json
 {
@@ -93,7 +93,7 @@
 |outbounds|int32|扇出数，表示对外连接的节点个数|
 |inbounds|int32|扇入数，表示有多少外部节点连接本节点|
 
-### 1.3 查询时间状态 GetTimeStatus
+### 3 查询时间状态 GetTimeStatus
 **请求报文<!--[types/ReqNil]-->：**
 ```json
 {
@@ -124,7 +124,7 @@
 |localTime|string|节点本地时间|
 |diff|int64|本地事件和标准时间差，单位：秒，如本地时间较快则为整数，否则为负数|
 
-### 1.4 查询同步状态 IsSync
+### 4 查询同步状态 IsSync
 **请求报文<!--[types/ReqNil]-->：**
 ```json
 {
@@ -153,7 +153,7 @@
 |----|----|----|
 |result|bool|为true时表示同步成功|
 
-### 1.5 获取主代币信息 GetCoinSymbol
+### 5 获取主代币信息 GetCoinSymbol
 **请求报文<!--[types/ReqNil]-->：**
 ```json
 {
@@ -184,9 +184,7 @@
 |----|----|----|
 |data|string|当前节点的主代币信息, 如 bty|
 
-
-
-### 1.6 获取系统支持签名类型 GetCryptoList
+### 6 获取系统支持签名类型 GetCryptoList
 **请求报文<!--[types/ReqNil]-->：**
 ```json
 {

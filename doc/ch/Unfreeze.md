@@ -1,4 +1,4 @@
-# 1 Unfreeze
+## Unfreeze
 
 [TOC]
 
@@ -20,9 +20,9 @@
   在受益人没有及时提币的情况下，受益人在一段时间之后可以一次性提走本该解冻的所有的币。
   即解冻的币是按指定形式解冻的，和受益人的提币时间和次数等都不会影响解冻的进程。
 
-## 1.1 创建交易
+### 1 创建交易
 
-### 1.1.1 命令行
+#### 1.1 命令行
 
 ```
 创建定期解冻合约
@@ -36,8 +36,8 @@
 
 ```
 
-### 1.1.2 rpc 接口
-#### 1.创建定期解冻合约CreateRawUnfreezeCreate
+#### 1.2 rpc 接口
+##### 1.2.1 创建定期解冻合约CreateRawUnfreezeCreate
 **请求报文<!--[dapp/unfreeze/types/UnfreezeCreate]-->：**
 ```json
 {
@@ -96,7 +96,7 @@ meansOpt的不同取值说明：
 |----|----|----|
 |result|string|交易对象的十六进制字符串编码|
 
-#### 2.受益人提取CreateRawUnfreezeWithdraw
+##### 1.2.2 受益人提取CreateRawUnfreezeWithdraw
 
 **请求报文<!--[dapp/unfreeze/types/UnfreezeWithdraw]-->：**
 ```json
@@ -128,7 +128,7 @@ meansOpt的不同取值说明：
 |----|----|----|
 |result|string|交易对象的十六进制字符串编码|
 
-#### 3.终止冻结合约CreateRawUnfreezeTerminate
+##### 1.2.3 终止冻结合约CreateRawUnfreezeTerminate
 
 **请求报文<!--[dapp/unfreeze/types/UnfreezeTerminate]-->：**
 
@@ -161,7 +161,7 @@ meansOpt的不同取值说明：
 |----|----|----|
 |result|string|交易对象的十六进制字符串编码|
 
-## 1.2 查询合约状态 GetUnfreeze
+### 2 查询合约状态 GetUnfreeze
 
 **请求报文<!--[types/ReqString]-->：**
 ```json
@@ -227,7 +227,7 @@ meansOpt的不同取值说明：
 |fixAmount| struct | 算法对应参数 |
 |terminated|bool|是否已经终止|
 
-## 1.3 查询合约可提币量 GetUnfreezeWithdraw
+### 3 查询合约可提币量 GetUnfreezeWithdraw
 
 **请求报文<!--[types/ReqString]-->：**
 ```json
@@ -274,7 +274,7 @@ meansOpt的不同取值说明：
 |availableAmount |int64| 合约中解冻了的但还没有被提走的资产数目 |
 
 
-## 1.4 用创建地址查询合约列表 ListUnfreezeByCreator
+### 4 用创建地址查询合约列表 ListUnfreezeByCreator
 
 **请求报文<!--[dapp/unfreeze/types/ReqUnfreezes]-->：**
 ```json
@@ -309,7 +309,6 @@ meansOpt的不同取值说明：
 |direction|int32|查询的方向|
 |fromKey|string|查询开始的主键|
 
-  
 **响应报文：**
 
 ```json
@@ -356,7 +355,7 @@ meansOpt的不同取值说明：
 |means | string | 合约解冻算法名 |
 |fixAmount| struct | 算法对应参数 |
 
-## 1.5 用受益地址查询合约列表 ListUnfreezeByBeneficiary
+### 5 用受益地址查询合约列表 ListUnfreezeByBeneficiary
 
 **请求报文<!--[dapp/unfreeze/types/ReqUnfreezes]-->：**
 ```json
@@ -378,7 +377,6 @@ meansOpt的不同取值说明：
 		}
 	]
 }
-
 ```
 
 **参数说明：**
@@ -419,7 +417,6 @@ meansOpt的不同取值说明：
 	},
 	"error" : null
 }
-
 ```
 
 **参数说明：**

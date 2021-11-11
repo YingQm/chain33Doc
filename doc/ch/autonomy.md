@@ -1,7 +1,7 @@
-# autonomy 接口
+## autonomy 接口
 [TOC]
-## 1 自治系统参数默认值以及范围
-### 1.1 可修改参数
+### 1 自治系统参数默认值以及范围
+#### 1.1 可修改参数
 ```
     // 默认公示周期,以区块高度计算,换算成时间大概一周
     publicPeriod         int32 = 17280 * 7  
@@ -50,15 +50,15 @@
 	// 最大全体持票人赞成率
 	maxPubApproveRatio = 80
 ```
-### 1.2 不可修改参数
+#### 1.2 不可修改参数
 ```
     // 董事会成员数范围
     minBoards                 = 20
 	maxBoards                 = 40                  
 ```
 
-## 1 提案董事会成员
-### 1.1 提案董事会成员 PropBoard
+### 2 提案董事会成员
+#### 2.1 提案董事会成员 PropBoard
 
 **请求报文：**
 ```json
@@ -110,7 +110,7 @@
 |----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 1.2 撤销提案董事会成员 RvkPropBoard
+#### 2.2 撤销提案董事会成员 RvkPropBoard
 
 **请求报文：**
 ```json
@@ -148,7 +148,7 @@
 |----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 1.3 投票提案董事会成员 VotePropBoard
+#### 2.3 投票提案董事会成员 VotePropBoard
 
 **请求报文：**
 ```json
@@ -190,7 +190,7 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 1.4 终止董事会成员提案 TmintPropBoard
+#### 2.4 终止董事会成员提案 TmintPropBoard
 
 **请求报文：**
 ```json
@@ -228,8 +228,8 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 1.5 查询提案
-#### 1.5.1 通过 proposalID 查询提案 GetProposalBoard
+#### 2.5 查询提案
+##### 2.5.1 通过 proposalID 查询提案 GetProposalBoard
 **请求报文：**
 ```json
 {
@@ -251,7 +251,7 @@
 |----|----|----|----|
 |data|string|是|提案ID, 即PropBoard的交易hash|
 
-#### 1.5.2 通过状态或者地址以及状态地址查询提案 ListProposalBoard
+##### 2.5.2 通过状态或者地址以及状态地址查询提案 ListProposalBoard
 
 **请求报文：**
 ```json
@@ -357,7 +357,7 @@
 |index|int32|提案index|
 |proposalID|string|提案ID|
 
-### 1.6 查询有效的董事会成员 GetActiveBoard
+#### 2.6 查询有效的董事会成员 GetActiveBoard
 
 **请求报文：**
 ```json
@@ -402,8 +402,8 @@
 |amount|int64|该boards在当前周期已经审批的项目金|
 |startHeight|int64|当前周期的起始区块高度|
 
-## 2 提案项目
-### 2.1 提案项目 PropProject
+### 3 提案项目
+#### 3.1 提案项目 PropProject
 
 **请求报文：**
 ```json
@@ -469,7 +469,7 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 2.2 撤销提案项目 RvkPropProject
+#### 3.2 撤销提案项目 RvkPropProject
 
 **请求报文：**
 ```json
@@ -507,7 +507,7 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 2.3 投票提案项目 VotePropProject
+#### 3.3 投票提案项目 VotePropProject
 
 **请求报文：**
 ```json
@@ -547,7 +547,7 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 2.4 投票反对提案项目 PubVotePropProject
+#### 3.4 投票反对提案项目 PubVotePropProject
 
 **请求报文：**
 ```json
@@ -589,7 +589,7 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 2.5 终止提案项目 TmintPropProject
+#### 3.5 终止提案项目 TmintPropProject
 
 **请求报文：**
 ```json
@@ -627,8 +627,8 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 2.5 查询提案
-#### 2.5.1 通过 proposalID 查询提案 GetProposalProject
+#### 3.5 查询提案
+##### 3.5.1 通过 proposalID 查询提案 GetProposalProject
 
 **请求报文：**
 ```json
@@ -651,7 +651,7 @@
 |----|----|----|----|
 |data|string|是|提案ID, 即PropProject的交易hash|
 
-#### 2.5.2 通过状态或者地址以及状态地址查询提案 ListProposalProject
+##### 3.5.2 通过状态或者地址以及状态地址查询提案 ListProposalProject
 
 **请求报文：**
 ```json
@@ -759,8 +759,8 @@
 |index|int32|提案index|
 |proposalID|string|提案ID|
 
-## 3 提案系统参数修改
-### 3.1 提案系统参数修改 PropRule
+### 4 提案系统参数修改
+#### 4.1 提案系统参数修改 PropRule
 
 **请求报文：**
 ```json
@@ -824,7 +824,7 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 3.2 撤销提案系统参数修改 RvkPropRule
+#### 4.2 撤销提案系统参数修改 RvkPropRule
 
 **请求报文：**
 ```json
@@ -862,7 +862,7 @@
 |----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 3.3 投票提案系统参数修改 VotePropRule
+#### 4.3 投票提案系统参数修改 VotePropRule
 
 **请求报文：**
 ```json
@@ -904,7 +904,7 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 3.4 终止提案系统参数修改 TmintPropRule
+#### 4.4 终止提案系统参数修改 TmintPropRule
 
 **请求报文：**
 ```json
@@ -942,9 +942,9 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 3.5 查询提案
+#### 4.5 查询提案
 
-#### 3.5.1 通过 proposalID 查询提案 GetProposalRule
+##### 4.5.1 通过 proposalID 查询提案 GetProposalRule
 
 **请求报文：**
 ```json
@@ -967,7 +967,7 @@
 |----|----|----|----|
 |data|string|是|提案ID, 即PropRule的交易hash|
 
-#### 3.5.2 通过状态或者地址以及状态地址查询提案 ListProposalRule
+##### 4.5.2 通过状态或者地址以及状态地址查询提案 ListProposalRule
 
 **请求报文：**
 ```json
@@ -1066,7 +1066,7 @@
 |index|int32|提案index|
 |proposalID|string|提案ID|
 
-### 3.6 查询有效系统参数 GetActiveRule
+#### 4.6 查询有效系统参数 GetActiveRule
 
 **请求报文：**
 ```json
@@ -1117,8 +1117,8 @@
 |largeProjectAmount|int64|重大项目阈值|
 |publicPeriod|int32|公示期|
 
-## 4 提案董事会成员修改
-### 4.1 提案董事会成员修改 PropChange
+### 5 提案董事会成员修改
+#### 5.1 提案董事会成员修改 PropChange
 
 **请求报文：**
 ```json
@@ -1175,7 +1175,7 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 4.2 撤销提案董事会成员修改 RvkPropChange
+#### 5.2 撤销提案董事会成员修改 RvkPropChange
 
 **请求报文：**
 ```json
@@ -1213,7 +1213,7 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 4.3 投票提案董事会成员修改 VotePropChange
+#### 5.3 投票提案董事会成员修改 VotePropChange
 
 **请求报文：**
 ```json
@@ -1253,7 +1253,7 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 4.4 终止提案董事会成员修改 TmintPropChange
+#### 5.4 终止提案董事会成员修改 TmintPropChange
 
 **请求报文：**
 ```json
@@ -1291,9 +1291,9 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 4.5 查询提案
+#### 5.5 查询提案
 
-#### 4.5.1 通过 proposalID 查询提案 GetProposalChange
+##### 5.5.1 通过 proposalID 查询提案 GetProposalChange
 
 **请求报文：**
 ```json
@@ -1316,7 +1316,7 @@
 |----|----|----|----|
 |data|string|是|提案ID, 即PropChange的交易hash|
 
-#### 4.5.2 通过状态或者地址以及状态地址查询提案 ListProposalChange
+##### 5.5.2 通过状态或者地址以及状态地址查询提案 ListProposalChange
 
 **请求报文：**
 ```json
@@ -1424,8 +1424,8 @@
 |index|int32|提案index|
 |proposalID|string|提案ID|
 
-## 5 评论提案
-### 5.1 评论提案 CommentProp
+### 6 评论提案
+#### 6.1 评论提案 CommentProp
 
 **请求报文：**
 ```json
@@ -1469,7 +1469,7 @@
 |----|----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 5.2 通过提案 ID 查询所对应评论 ListProposalComment
+#### 6.2 通过提案 ID 查询所对应评论 ListProposalComment
 
 **请求报文：**
 ```json

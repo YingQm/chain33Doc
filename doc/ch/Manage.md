@@ -1,10 +1,10 @@
-## 1 Manage
+## Manage
 [TOC]
 
 manage 管理执行器，主要功能是动态地给其他执行器配置和调整参数值。如给token执行器增加黑名单，给game执行器设置最大的赌资等等。
 所有修改都是通过指定的manager账户地址，发送交易去修改参数值。这样做可以避免系统因为修改参数值而导致硬分叉。
 
-### 1.1 添加/删除一个token-finisher CreateTransaction
+### 1 添加/删除一个token-finisher CreateTransaction
 **请求报文<!--[types/ModifyConfig]-->：**
 ```json
 {
@@ -53,7 +53,7 @@ payload携带的内容格式如下：
 |----|----|----|
 |result|string|交易的hex字节码|
 
-### 1.2 查看finish apprv列表apprv列表 GetConfigItem
+### 2 查看finish apprv列表apprv列表 GetConfigItem
 **请求报文<!--[types/ReqString]-->：**
 ```json
 {

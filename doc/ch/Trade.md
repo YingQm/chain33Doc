@@ -1,4 +1,4 @@
-## 1 Trade 接口
+## Trade 接口
 [TOC]
 
 在下面查询相关接口中，返回的卖单都一个一种格式，买单也是一种格式，只在第一个卖单或买单查询中列出其格式，不重复。
@@ -17,7 +17,7 @@
 
 Buy/Sell ID 在创建交易时不需要带上前缀 "mavl-trade-sell-" 或 "mavl-trade-buy-"
 
-### 1.1 查询地址对应的买单 GetOnesBuyOrder
+### 1 查询地址对应的买单 GetOnesBuyOrder
 只指定地址，同时指定地址和token
 
 **请求报文<!--[dapp/trade/types/ReqAddrAssets]-->：**
@@ -119,7 +119,7 @@ Buy/Sell ID 在创建交易时不需要带上前缀 "mavl-trade-sell-" 或 "mavl
 |priceSymbol|string|-|
 
 
-### 1.2 分状态查询地址的买单 GetOnesBuyOrderWithStatus
+### 2 分状态查询地址的买单 GetOnesBuyOrderWithStatus
 **请求报文<!--[dapp/trade/types/ReqAddrAssets]-->：**
 ```json
 {
@@ -183,7 +183,7 @@ Buy/Sell ID 在创建交易时不需要带上前缀 "mavl-trade-sell-" 或 "mavl
 ```
 result: 对应买单的列表，各项同1.1。
 
-### 1.3 显示一个token 指定数量的买单 GetTokenBuyOrderByStatus
+### 3 显示一个token 指定数量的买单 GetTokenBuyOrderByStatus
 **请求报文<!--[dapp/trade/types/ReqTokenBuyOrder]-->：**
 ```json
 {
@@ -242,7 +242,7 @@ result: 对应买单的列表，各项同1.1。
 ```
 result: 对应买单的列表，各项同1.1。
 
-### 1.4 显示指定token出售者的一个或多个token 或 不指定token 的卖单 GetOnesSellOrder
+### 4 显示指定token出售者的一个或多个token 或 不指定token 的卖单 GetOnesSellOrder
 **请求报文<!--[dapp/trade/types/ReqAddrAssets]-->：**
 ```json
 {
@@ -325,7 +325,7 @@ result: 对应买单的列表，各项同1.1。
 |priceExec|string||
 |priceSymbol|string|-|
 
-### 1.5 显示指定状态下的某地址卖单   GetOnesSellOrderWithStatus
+### 5 显示指定状态下的某地址卖单   GetOnesSellOrderWithStatus
 **请求报文<!--[dapp/trade/types/ReqAddrAssets]-->：**
 ```json
 {
@@ -386,13 +386,13 @@ result: 对应买单的列表，各项同1.1。
 ```
 result: 对应卖单的列表，各项同1.4。
 
-### 1.6 显示一个用户成交的所有买单
+### 6 显示一个用户成交的所有买单
 见 1.1
 
-### 1.7 显示一个用户成交的指定一个或者多个token所有买单
+### 7 显示一个用户成交的指定一个或者多个token所有买单
 见 1.1
 
-### 1.8 显示一个token 指定数量的卖单 GetTokenSellOrderByStatus
+### 8 显示一个token 指定数量的卖单 GetTokenSellOrderByStatus
 **请求报文<!--[dapp/trade/types/ReqTokenSellOrder]-->：**
 ```json
 {
@@ -451,7 +451,7 @@ result: 对应卖单的列表，各项同1.4。
 ```
 result: 对应卖单的列表，各项同1.4。
 
-### 1.9 生成 卖出资产的交易（未签名） CreateRawTradeSellTx
+### 9 生成 卖出资产的交易（未签名） CreateRawTradeSellTx
 **请求报文<!--[dapp/trade/types/TradeSellTx]-->：**
 ```json
 {
@@ -501,7 +501,7 @@ result: 对应卖单的列表，各项同1.4。
 |----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 1.10 生成买入指定卖单卖出的token的交易（未签名）CreateRawTradeBuyTx
+### 10 生成买入指定卖单卖出的token的交易（未签名）CreateRawTradeBuyTx
 **请求报文<!--[dapp/trade/types/TradeBuyTx]-->：**
 ```json
 {
@@ -540,7 +540,7 @@ result: 对应卖单的列表，各项同1.4。
 |----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 1.11 生成撤销卖出token(卖单)的交易（未签名） CreateRawTradeRevokeTx
+### 11 生成撤销卖出token(卖单)的交易（未签名） CreateRawTradeRevokeTx
 **请求报文<!--[dapp/trade/types/TradeRevokeTx]-->：**
 ```json
 {
@@ -571,7 +571,7 @@ result: 对应卖单的列表，各项同1.4。
 |----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 1.12 生成 买入token的交易（未签名） CreateRawTradeBuyLimitTx
+### 12 生成 买入token的交易（未签名） CreateRawTradeBuyLimitTx
 **请求报文<!--[dapp/trade/types/TradeBuyLimitTx]-->：**
 ```json
 {
@@ -622,7 +622,7 @@ result: 对应卖单的列表，各项同1.4。
 |----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 1.13 生成卖出指定买单的token的交易（未签名） CreateRawTradeSellMarketTx
+### 13 生成卖出指定买单的token的交易（未签名） CreateRawTradeSellMarketTx
 **请求报文<!--[dapp/trade/types/TradeSellMarketTx]-->：**
 ```json
 {
@@ -656,7 +656,7 @@ result: 对应卖单的列表，各项同1.4。
 |----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 1.14 生成撤销买入token(买单)的交易（未签名） CreateRawTradeRevokeBuyTx
+### 14 生成撤销买入token(买单)的交易（未签名） CreateRawTradeRevokeBuyTx
 **请求报文<!--[dapp/trade/types/TradeRevokeBuyTx]-->：**
 ```json
 {
@@ -688,7 +688,7 @@ result: 对应卖单的列表，各项同1.4。
 |----|----|----|
 |result|string|交易十六进制编码后的字符串|
 
-### 1.15 根据状态分页列出某地址的订单（包括买单卖单） GetOnesOrderWithStatus
+### 15 根据状态分页列出某地址的订单（包括买单卖单） GetOnesOrderWithStatus
 **请求报文<!--[dapp/trade/types/ReqAddrAssets]-->：**
 ```json
 {

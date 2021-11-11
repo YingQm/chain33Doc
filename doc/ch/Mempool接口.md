@@ -1,6 +1,6 @@
-## 1 Mempool 接口
+## Mempool 接口
 [TOC]
-### 1.1 获取 GetMempool
+### 获取 GetMempool
 **请求报文<!--[types/ReqGetMempool]-->：**
 ```json
 {
