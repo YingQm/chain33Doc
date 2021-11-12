@@ -1,0 +1,98 @@
+## 查询余额
+[TOC]
+### 1 查询地址余额 GetBalance
+
+**调用接口**
+```
+rpc GetBalance(ReqBalance) returns (Accounts) {}
+```
+**参数：**
+```
+message ReqBalance {
+    repeated string addresses = 1;
+    string execer       = 2;
+    string stateHash    = 3;
+    string asset_exec   = 4;
+    string asset_symbol = 5;
+}
+```
+
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|
+|addresses|[]string|是|要查询的地址列表|
+|execer|string|是|执行器名称，coins 查询可用的主代币 ，ticket 查询正在挖矿的主代币|
+|stateHash|string|否|状态Hash|
+|asset_exec|string|是|资产原始合约名称，如bty 在 coins 合约中产生，各种token 在 token 合约中产生， 跨链的资产在 paracross 合约中|
+|asset_symbol|string|是|资产名称，如 bty， token的各种 symbol ， 跨链的bty 名称为  coins.bty, 跨链的token 为 token.symbol |
+
+**返回数据：**
+```
+message Accounts {
+    repeated Account acc = 1;
+}
+
+message Account {
+    int32 currency = 1;
+    int64 balance = 2;
+    int64 frozen = 3;
+    string addr = 4;
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|currency|int32|货币类别，0为bty|
+|balance|int64|账户可用余额|
+|frozen|int64|账户被冻结余额|
+|addr|string|账户地址|
+
+### 2 查询地址所有合约地址余额 GetAllExecBalance
+**调用接口**
+```
+rpc GetAllExecBalance(ReqAllExecBalance) returns (AllExecBalance) {}
+```
+**参数：**
+```
+message ReqAllExecBalance {
+    string addr         = 1;
+    string execer       = 2;
+    string stateHash    = 3;
+    string asset_exec   = 4;
+    string asset_symbol = 5;
+}
+```
+
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|
+|addr|string|是|要查询的地址|
+|execer|string|是|执行器名称，coins 查询可用的主代币 ，ticket 查询正在挖矿的主代币|
+|stateHash|string|否|状态Hash|
+|asset_exec|string|是|资产原始合约名称，如bty 在 coins 合约中产生，各种token 在 token 合约中产生， 跨链的资产在 paracross 合约中|
+|asset_symbol|string|是|资产名称，如 bty， token的各种 symbol ， 跨链的bty 名称为  coins.bty, 跨链的token 为 token.symbol |
+
+**返回数据：**
+```
+message AllExecBalance {
+    string   addr                    = 1;
+    repeated ExecAccount ExecAccount = 2;
+}
+
+message ExecAccount {
+    string  execer  = 1;
+    Account account = 2;
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|addr|string|账户地址|
+|ExecAccount.Execer|string|执行器名称|
+|ExecAccount.Account|json|账户余额信息|
