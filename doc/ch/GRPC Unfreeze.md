@@ -20,8 +20,187 @@
   在受益人没有及时提币的情况下，受益人在一段时间之后可以一次性提走本该解冻的所有的币。
   即解冻的币是按指定形式解冻的，和受益人的提币时间和次数等都不会影响解冻的进程。
 
-### 1 查询合约状态 GetUnfreeze
+### 1 创建交易
 
+#### 1.1 命令行
+
+```
+创建定期解冻合约
+./chain33-cli send   unfreeze  create fix_amount -a 0.01  -e coins -s bty -b  12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv -p 60 -t 2  -k  private-key
+
+受益人提币
+./chain33-cli send  unfreeze   withdraw  --id mavl-unfreeze-1a8c91077df8e2be644f61b59706be8f7745f9b800868a73624956bd551abe41  -k private-key
+
+发起人终止合约
+./chain33-cli send  unfreeze   terminate  --id mavl-unfreeze-1a8c91077df8e2be644f61b59706be8f7745f9b800868a73624956bd551abe41  -k private-key
+
+```
+
+#### 1.2 grpc 接口
+##### 1.2.1 创建定期解冻合约CreateRawUnfreezeCreate
+程序员小哥哥正在努力研发中...
+<div style='display: none'>
+**调用接口**
+```
+
+```
+**参数：**
+```
+
+```
+```json
+{
+	"jsonrpc":"2.0",
+	"id":int32,
+	"method" : "unfreeze.CreateRawUnfreezeCreate",
+	"params" : [
+		{
+			"assetSymbol" : "bty",
+			"assetExec" : "coins",
+			"means" : "FixAmount",
+			"totalCount" : 400000000,
+			"beneficiary" : "",
+			"startTime" : 10000,
+			"fixAmount" : {
+				"period" : 10,
+				"amount" : 1000000
+			}
+		}
+	]
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|assetSymbol|string|要冻结的资产名称|
+|assetExec|string|要冻结的资产执行器|
+|totalCount|int64|冻结的资产数量， 单位是 1e-8， 即数量除以10的8次方个币|
+|beneficiary|string|受益人地址|
+|startTime|int64|开始解冻时间， UTC 秒， 默认为交易被打包时间|
+|means|string|指定解冻算法， 有效值 FixAmount LeftProportion|
+|meansOpt|isUnfreezeCreate_MeansOpt|具体解冻算法的参数，参见下面的说明|
+
+meansOpt的不同取值说明：
+|参数|类型|说明|
+|---|---|---|
+| fixAmount | struct | 按指定时间间隔，解冻固定的资产。|
+| fixAmount.period | int64 | 按指定时间间隔，单位秒。|
+| fixAmount.amount | int64 | 解冻指定的资产数量。单位 1e-8个币 |
+| leftProportion | struct |  按剩余量的固定比例解冻：指定时间间隔，按剩余量的固定比例解冻。 这种方式，越到后面解冻的越少。|
+| leftProportion.period | int64 | 按指定时间间隔，单位秒。|
+| leftProportion.tenThousandth | int64 | 固定比例，单位万分之一。 |
+
+**返回数据：**
+```
+
+```
+```json
+{
+    "id":int32,
+    "result":"string"
+}
+```
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|result|string|交易对象的十六进制字符串编码|
+</div>
+
+##### 1.2.2 受益人提取CreateRawUnfreezeWithdraw
+程序员小哥哥正在努力研发中...
+<div style='display: none'>
+
+**调用接口**
+```
+
+```
+**参数：**
+```
+
+```
+```json
+{
+	"jsonrpc":"2.0",
+	"id":int32,
+	"method" : "unfreeze.CreateRawUnfreezeWithdraw",
+	"params" : [{"unfreezeID" : "string"}]
+}
+
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|unfreezeID  |string| 冻结合约的ID， 可以查询创建冻结合约时，得到， 同创建冻结合约的交易ID的十六进制 |
+
+**返回数据：**
+```
+
+```
+```json
+{
+    "id":int32,
+    "result":"string"
+}
+```
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|result|string|交易对象的十六进制字符串编码|
+</div>
+
+##### 1.2.3 终止冻结合约CreateRawUnfreezeTerminate
+程序员小哥哥正在努力研发中...
+<div style='display: none'>
+
+**调用接口**
+```
+
+```
+**参数：**
+```
+
+```
+
+```json
+{
+	"jsonrpc":"2.0",
+	"id":int32,
+	"method" : "unfreeze.CreateRawUnfreezeTerminate",
+	"params" : [{"unfreezeID" : "string"}]
+}
+
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|unfreezeID  |string| 冻结合约的ID， 可以查询创建冻结合约时，得到， 同创建冻结合约的交易ID的十六进制 |
+
+**返回数据：**
+```
+
+```
+```json
+{
+    "id":int32,
+    "result":"string"
+}
+```
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|result|string|交易对象的十六进制字符串编码|
+</div>
+
+### 2 查询合约状态 GetUnfreeze
 **调用接口**
 ```
 rpc QueryUnfreeze(ReqString) returns (Unfreeze) {}
@@ -88,7 +267,7 @@ message LeftProportion {
 |meansOpt.leftProportion|LeftProportion|固定时间间隔按余量百分比解冻|
 |terminated|bool|是否已经终止|
 
-### 2 查询合约可提币量 GetUnfreezeWithdraw
+### 3 查询合约可提币量 GetUnfreezeWithdraw
 
 **调用接口**
 ```
@@ -121,3 +300,175 @@ message ReplyQueryUnfreezeWithdraw {
 |----|----|----|
 |unfreezeID|string|具体数据，这里合约的ID，是对应创建合约的交易Hash加上前缀 "mavl-unfreeze-"|
 |availableAmount|int64|合约中解冻了的但还没有被提走的资产数目 |
+
+
+### 4 用创建地址查询合约列表 ListUnfreezeByCreator
+**调用接口**
+```
+rpc QueryChain(ChainExecutor) returns (Reply) {}
+```
+**参数：**
+```
+message ChainExecutor {
+    string driver    = 1;
+    string funcName  = 2;
+    bytes  stateHash = 3;
+    bytes  param     = 4;
+    bytes  extra     = 5;
+}
+message ReqUnfreezes {
+    int32  direction   = 1;
+    int32  count       = 2;
+    string fromKey     = 3;
+    string initiator   = 4;
+    string beneficiary = 5;
+}
+```
+
+**参数说明：**
+
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|driver|bytes|是|执行器名称, 这里固定为 unfreeze|
+|funcName|string|是|操作名称, 这里固定为 ListUnfreezeByCreator|
+|stateHash|bytes|否|所有交易在对应的执行器执行后写入KVDB中重新计算得到的新state的哈希值|
+|param|bytes|是|types.Encode(&ReqUnfreezes)|
+|extra|bytes|否|扩展字段，用于额外的用途|
+|initiator|string|是|具体数据，创建合约的地址|
+|beneficiary|string|是|受益人地址|
+|count|int32|是|查询的数量|
+|direction|int32|是|查询的方向|
+|fromKey|string|是|查询开始的主键|
+
+**返回数据：**
+```
+message ReplyUnfreezes {
+    repeated ReplyUnfreeze unfreeze = 1;
+}
+message ReplyUnfreeze {
+    //解冻交易ID（唯一识别码）
+    string unfreezeID = 1;
+    //开始时间
+    int64 startTime = 2;
+    //币种
+    string assetExec   = 3;
+    string assetSymbol = 4;
+    //冻结总额
+    int64 totalCount = 5;
+    //发币人地址
+    string initiator = 6;
+    //收币人地址
+    string beneficiary = 7;
+    //解冻剩余币数
+    int64 remaining = 8;
+    //解冻方式（百分比；固额）
+    string means = 9;
+    oneof  meansOpt {
+        FixAmount      fixAmount      = 10;
+        LeftProportion leftProportion = 11;
+    }
+    bool   terminated = 12;
+    string key        = 13;
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|assetSymbol |string|资产标识 |
+|assetExec |string|资产所在执行器名 |
+|startTime | string | 合约生效时间， UTC 秒数|
+|unfreezeID |string|具体数据，这里合约的ID， 可以查询创建冻结合约时，得到， 同创建冻结合约的交易ID的十六进制。是对应的unfreezeID去掉前缀 "mavl-unfreeze-"|
+|initiator |string| 合约创建者 |
+|beneficiary |string| 合约受益人 |
+|totalCount | string| 冻结资产总数 |
+|remaining | string | 合约中剩余资产总数 |
+|means | string | 合约解冻算法名 |
+|fixAmount| struct | 算法对应参数 |
+
+### 5 用受益地址查询合约列表 ListUnfreezeByBeneficiary
+**调用接口**
+```
+rpc QueryChain(ChainExecutor) returns (Reply) {}
+```
+**参数：**
+```
+message ChainExecutor {
+    string driver    = 1;
+    string funcName  = 2;
+    bytes  stateHash = 3;
+    bytes  param     = 4;
+    bytes  extra     = 5;
+}
+message ReqUnfreezes {
+    int32  direction   = 1;
+    int32  count       = 2;
+    string fromKey     = 3;
+    string initiator   = 4;
+    string beneficiary = 5;
+}
+```
+
+**参数说明：**
+
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|driver|bytes|是|执行器名称, 这里固定为 unfreeze|
+|funcName|string|是|操作名称, 这里固定为 ListUnfreezeByBeneficiary|
+|stateHash|bytes|否|所有交易在对应的执行器执行后写入KVDB中重新计算得到的新state的哈希值|
+|param|bytes|是|types.Encode(&ReqUnfreezes)|
+|extra|bytes|否|扩展字段，用于额外的用途|
+|initiator|string|是|创建者地址|
+|beneficiary|string|是|受益人地址|
+|count|int32|是|查询的数量|
+|direction|int32|是|查询的方向|
+|fromKey|string|是|查询开始的主键|
+
+**返回数据：**
+```
+message ReplyUnfreezes {
+    repeated ReplyUnfreeze unfreeze = 1;
+}
+
+message ReplyUnfreeze {
+    //解冻交易ID（唯一识别码）
+    string unfreezeID = 1;
+    //开始时间
+    int64 startTime = 2;
+    //币种
+    string assetExec   = 3;
+    string assetSymbol = 4;
+    //冻结总额
+    int64 totalCount = 5;
+    //发币人地址
+    string initiator = 6;
+    //收币人地址
+    string beneficiary = 7;
+    //解冻剩余币数
+    int64 remaining = 8;
+    //解冻方式（百分比；固额）
+    string means = 9;
+    oneof  meansOpt {
+        FixAmount      fixAmount      = 10;
+        LeftProportion leftProportion = 11;
+    }
+    bool   terminated = 12;
+    string key        = 13;
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|assetSymbol |string|资产标识 |
+|assetExec |string|资产所在执行器名 |
+|startTime | string | 合约生效时间， UTC 秒数|
+|unfreezeID |string|具体数据，这里合约的ID， 可以查询创建冻结合约时，得到， 同创建冻结合约的交易ID的十六进制。是对应的unfreezeID去掉前缀 "mavl-unfreeze-"|
+|initiator |string| 合约创建者 |
+|beneficiary |string| 合约受益人 |
+|totalCount | string| 冻结资产总数 |
+|remaining | string | 合约中剩余资产总数 |
+|means | string | 合约解冻算法名 |
+|fixAmount| struct | 算法对应参数 |

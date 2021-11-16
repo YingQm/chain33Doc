@@ -84,7 +84,52 @@ message NodeNetInfo {
 |outbounds|int32|扇出数，表示对外连接的节点个数|
 |inbounds|int32|扇入数，表示有多少外部节点连接本节点|
 
-### 3 查询同步状态 IsSync
+### 3 查询时间状态 GetTimeStatus
+程序员小哥哥正在努力研发中...
+<div style='display: none'>
+
+**调用接口**
+```
+
+```
+**参数：**
+```
+
+```
+```json
+{
+    "jsonrpc":"2.0",
+    "id":int32,
+    "method":"Chain33.GetTimeStatus",
+    "params":[]
+}
+```
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|
+
+**返回数据：**
+```
+
+```
+```json
+{
+    "ntpTime":"string",
+    "localTime":"string",
+    "diff":int64
+}
+```
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|ntpTime|string|网络标准时间|
+|localTime|string|节点本地时间|
+|diff|int64|本地事件和标准时间差，单位：秒，如本地时间较快则为整数，否则为负数|
+</div>
+
+### 4 查询同步状态 IsSync
 **调用接口**
 ```
 rpc IsSync(ReqNil) returns (Reply) {}
@@ -105,3 +150,95 @@ message Reply {
 |参数|类型|说明|
 |----|----|----|
 |isOk|bool|为true时表示同步成功|
+
+### 5 获取主代币信息 GetCoinSymbol
+程序员小哥哥正在努力研发中...
+<div style='display: none'>
+
+**调用接口**
+```
+
+```
+**参数：**
+```
+
+```
+```json
+{
+    "jsonrpc":"2.0",
+    "id":int32,
+    "method":"Chain33.GetCoinSymbol",
+    "params":[]
+}
+```
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|
+
+**返回数据：**
+```
+
+```
+```json
+{
+   "id" : int32,
+   "error" : string,
+   "result" : {
+      "data" : string
+   }
+}
+```
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|data|string|当前节点的主代币信息, 如 bty|
+</div>
+
+### 6 获取系统支持签名类型 GetCryptoList
+程序员小哥哥正在努力研发中...
+<div style='display: none'>
+
+**调用接口**
+```
+
+```
+**参数：**
+```
+
+```
+```json
+{
+    "jsonrpc":"2.0",
+    "id":int32,
+    "method":"Chain33.GetCryptoList",
+    "params":[]
+}
+```
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|
+
+**返回数据：**
+```
+
+```
+```json
+{
+   "id" : int32,
+   "error" : string,
+   "result" : {
+      "cryptos" : [{"name":"secp256k1", "typeID":1}]
+   }
+}
+```
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|cryptos|数组|签名类型数组|
+|name|string|签名类型名称|
+|typeID|int32|签名类型ID|
+</div>

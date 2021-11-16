@@ -69,7 +69,7 @@ message UnsignTx {
 |----|----|----|
 |data|bytes|交易十六进制编码后的数据|
 
-### 3 备份地址生效 CreateRawRetrievePerformTx
+### 3 备份地址生效 Perform
 **调用接口**
 ```
 rpc Perform(PerformRetrieve) returns (UnsignTx) {}
@@ -109,7 +109,7 @@ message UnsignTx {
 |----|----|----|
 |data|bytes|交易十六进制编码后的数据|
 
-### 4 取消备份(已准备还未生效) CreateRawRetrieveCancelTx
+### 4 取消备份(已准备还未生效) Cancel
 **调用接口**
 ```
 rpc Cancel(CancelRetrieve) returns (UnsignTx) {}
@@ -141,3 +141,62 @@ message UnsignTx {
 |参数|类型|说明|
 |----|----|----|
 |data|bytes|交易十六进制编码后的数据|
+
+### 5 查询备份地址状态 Query
+**调用接口**
+```
+rpc QueryChain(ChainExecutor) returns (Reply) {}
+```
+**参数：**
+```
+message ChainExecutor {
+    string driver    = 1;
+    string funcName  = 2;
+    bytes  stateHash = 3;
+    bytes  param     = 4;
+    bytes  extra     = 5;
+}
+message ReqRetrieveInfo {
+    string backupAddress  = 1;
+    string defaultAddress = 2;
+    string assetExec      = 3;
+    string assetSymbol    = 4;
+}
+```
+
+**参数说明：**
+
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|driver|bytes|是|执行器名称, 这里固定为 retrieve|
+|funcName|string|是|操作名称, 这里固定为 GetRetrieveInfo|
+|stateHash|bytes|否|所有交易在对应的执行器执行后写入KVDB中重新计算得到的新state的哈希值|
+|param|bytes|是|types.Encode(&)|
+|extra|bytes|否|扩展字段，用于额外的用途|
+|assetExec|string|是|资产执行器名|
+|assetSymbol|string|是|资产名称|
+|backupAddress|string|是|备份地址|
+|defaultAddress|string|是|主账户地址|
+
+**返回数据：**
+```
+message RetrieveQuery {
+    string backupAddress  = 1;
+    string defaultAddress = 2;
+    int64  delayPeriod    = 3;
+    int64  prepareTime    = 4;
+    int64  remainTime     = 5;
+    int32  status         = 6;
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|backupAddress|string|备份地址|
+|defaultAddress|string|主账户地址|
+|delayPeriod|string|生效延时|
+|prepareTime|string|准备生效时间|
+|remainTime|string|生效剩余时间|
+|status|int32|当前状态(1:地址已备份 2:备份地址准备生效 3:备份地址生效)|

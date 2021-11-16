@@ -3,6 +3,7 @@
 
 ### 1 构造并发送交易
 要发送一个交易，均需要经过三个步骤：构造交易->交易签名->发送交易；
+
 **构造交易：**填写交易的关键信息，从而构造一条完整的交易数据；
 **交易签名：**对交易数据进行签名，即标识交易的所有者身份，也防止交易数据被篡改；
 **发送交易：**将交易数据发送到区块链上去执行；
@@ -256,22 +257,113 @@ message ReplySignRawTx {
 |----|----|----|
 |txHex|string|未签名的原始交易数据|
 
-#### 1.5 错误信息
+#### 1.5 构造多笔并发送不收手续费交易 CreateNoBlanaceTxs（平行链）
+同1.1.4 一样，可以创建发送不需要手续费的交易，不同的是，1.1.4接口只能构造单笔免手续费交易，而本接口可以创建多笔免手续费交易
 
-|Code|output|description|
+**调用接口**
+```
+rpc CreateNoBalanceTxs(NoBalanceTxs) returns (ReplySignRawTx) {}
+```
+**参数：**
+```
+message NoBalanceTxs {
+    repeated string txHexs  = 1;
+    string          payAddr = 2;
+    string          privkey = 3;
+    string          expire  = 4;
+}
+```
+
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|
+|txHexs|[]string|是|未签名的原始交易数据|
+|payAddr|string|是|用于付费的地址，这个地址要在主链上存在，并且里面有比特元用于支付手续费, payAddr与privkey可以只输入其一，如果使用payAddr则依赖钱包中存储的私钥签名|
+|privkey|string|否|对应于payAddr的私钥。如果payAddr已经导入到平行链，可以只传地址|
+|expire|string|否|过期时间可输入如"300s"，"-1.5h"或者"2h45m"的字符串，有效时间单位为"ns", "us" (or "µs"), "ms", "s", "m", "h"， 不传递默认设置永不过期|
+
+**返回数据：**
+```
+message ReplySignRawTx {
+    string txHex = 1;
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|txHex|string|未签名的原始交易数据|
+
+
+#### 1.6 重写交易 ReWriteRawTx
+支持对原始交易或交易组参数重写
+
+程序员小哥哥正在努力研发中...
+<div style='display: none'>
+
+**调用接口**
+```
+
+```
+**参数：**
+```
+
+```
+```json
+{
+    "jsonrpc":"2.0",
+    "id":int32,
+    "method":"Chain33.ReWriteRawTx",
+    "params":[{"to":"string","fee":int64,"tx":"string","expire":"string","index":int32}]
+}
+```
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|
+|to|string|否|重写交易的目的地址，只有单笔交易生效，交易组不生效|
+|fee|int64|否|重写交易的费用，交易组只会修改第一笔交易的费用|
+|tx|string|是|需要重写的原始交易数据|
+|expire|string|否|过期时间可输入如"300ms"，”-1.5h”或者”2h45m”的字符串，有效时间单位为”ns”, “us” (or “µs”), “ms”, “s”, “m”, “h”|
+|index|int32|否|若是交易组，则为要重写的交易序号，从1开始，小于等于0则为交易组内全部交易|
+
+
+**返回数据：**
+```
+
+```
+```json
+{
+    "id":int32,
+    "result":{"string"},
+    "error":null
+}
+```
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|result|string|重写之后交易的十六进制字符串|
+</div>
+
+#### 1.7 错误信息
+
+|code|output|description|
 |-|-|-|
-|TxExistErr|transaction exists|该交易已存在mempool中|
-|LowFeeErr|low transaction fee|交易费过低|
-|ManyTxErr|you have too many transactions|同一账户在mempool中有超过10笔交易|
-|SignErr|wrong signature|签名错误|
-|LowBalanceErr|low balance|余额不足|
-|BigMsgErr|message too big|消息过大|
-|ExpireErr|message expired|消息过期|
-|LoadAccountsErr|loadacconts error|匹配账户错误|
-|EmptyTxErr|empty transaction|交易为空|
-|DupTxErr|duplicated transaction|重复交易|
-|MemNotReadyErr|mempool not ready|mempool未启动|
-|MemFullErr|mempool is full|mempool已满|
+|txExistErr|transaction exists|该交易已存在mempool中|
+|lowFeeErr|low transaction fee|交易费过低|
+|manyTxErr|you have too many transactions|同一账户在mempool中有超过10笔交易|
+|signErr|wrong signature|签名错误|
+|lowBalanceErr|low balance|余额不足|
+|bigMsgErr|message too big|消息过大|
+|expireErr|message expired|消息过期|
+|loadAccountsErr|loadacconts error|匹配账户错误|
+|emptyTxErr|empty transaction|交易为空|
+|dupTxErr|duplicated transaction|重复交易|
+|memNotReadyErr|mempool not ready|mempool未启动|
+|memFullErr|mempool is full|mempool已满|
 
 ### 2 根据哈希查询交易信息 QueryTransaction
 **调用接口**
@@ -325,6 +417,175 @@ message ReceiptData {
 |actionName|string|操作名称，不同的执行器可能会有不同的值，如coins（transfer，withdraw，genesis），ticket（genesis，open，close，miner）|
 |receipt.Ty|int32|receipt.ty == 1 表示执行失败；receipt.ty == 2 表示执行成功|
 
+### 3 根据地址获取交易信息 GetTxByAddr
+程序员小哥哥正在努力研发中...
+<div style='display: none'>
+
+**调用接口**
+```
+
+```
+**参数：**
+```
+
+```
+```json
+{
+    "jsonrpc":"2.0",
+    "id":int32,
+    "method":"Chain33.GetTxByAddr",
+    "params":[
+        {
+			"addr":"string",
+			"flag":int32,
+			"count":int32,
+			"direction":int32,
+			"height":int64,
+			"index":int64
+		}
+	]
+}
+```
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|
+|addr|string|是|要查询的账户地址|
+|count|int32|是|返回的数据条数|
+|direction|int32|是|查询的方向；0：正向查询，区块高度从低到高；-1：反向查询；|
+|flag|int32|否|交易类型；0：所有涉及到addr的交易； 1：addr作为发送方； 2：addr作为接收方；|
+|height|int64|否|交易所在的block高度，-1：表示从最新的开始向后取；大于等于0的值，从具体的高度+具体index开始取|
+|index|int64|否|交易所在block中的索引，取值0--100000|
+
+**返回数据：**
+```
+
+```
+```json
+{
+    "id":int32,
+    "result":
+    {
+        "txInfos":
+        [
+            {
+                "hash": "string",
+                "height": int64,
+                "index": int64,
+                "assets": [
+                      {
+                         "exec":"string",
+						 "symbol":"string",
+						 "amount":int64
+					}
+				]
+			}
+        ]
+    }
+}
+```
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|txInfos|json|交易数组；包含交易的哈希、高度、以及资产信息；|
+|txInfos.hash|string|交易 id，可以通过接口 QueryTransaction 获取具体的交易信息|
+|txInfos.assets|array|资产信息， 列出交易相关的资产。 可能整个数组 为 null|
+
+**示例：**
+Request:
+```json
+{
+    "jsonrpc":"2.0",
+    "id":int32,
+    "method":"Chain33.GetTxByAddr",
+    "params":[
+        {
+			"addr":"1JZqMjcbETCENx2JAsWSQwCGXu25icLpz4",
+			"flag":0,
+			"count":10,
+			"direction":0,
+			"height":-1,
+			"index":0
+		}
+	]
+}
+```
+Response:
+```json
+{
+    "id":int32,
+    "result":
+    {
+        "txInfos":
+        [
+            {
+                "hash": "0xf5eeeaf0471f126078567418bfdfb944e82471fdd41fc32b6bed8c0807d16259",
+                "height": 3705,
+                "index": 4987,
+                "assets": [
+                      {
+                         "exec": "coins", "symbol": "BTY"
+                      }
+                 ]
+            }
+        ]
+    }
+}
+```
+</div>
+
+### 4 根据哈希数组批量获取交易信息 GetTxByHashes
+程序员小哥哥正在努力研发中...
+<div style='display: none'>
+
+**调用接口**
+```
+
+```
+**参数：**
+```
+
+```
+```json
+{
+    "jsonrpc":"2.0",
+    "id":int32,
+    "method":"Chain33.GetTxByHashes",
+    "params":[{"hashes":["string"],"disableDetail":bool}]
+}
+```
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|
+|hashes|[]string|是|交易ID列表，用逗号“,”分割|
+|disableDetail|bool|否|是否隐藏交易详情，默认为false|
+
+**返回数据：**
+```
+
+```
+```json
+{
+    "id":int32,
+    "result":
+    {
+        "txs":
+        [
+            {
+                "tx": {}
+            }
+        ]
+    }
+}
+```
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|tx|json|单个交易详情信息，请参考 QueryTransaction接口|
+</div>
 
 ### 3 根据哈希获取交易的字符串 GetHexTxByHash
 **调用接口**
@@ -405,6 +666,37 @@ message AddrOverview {
 |txCount|int64|交易量计数|
 |balance|int64|当前余额|
 
+### 7 将合约名转成实际地址 ConvertExectoAddr
+**调用接口**
+```
+rpc ConvertExectoAddr(ReqString) returns (ReplyString) {}
+```
+**参数：**
+```
+message ReqString {
+    string data = 1;
+}
+```
+
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|
+|data|string|是|执行器名称，如果需要往执行器中转币这样的操作，需要调用些接口将执行器名转成实际地址|
+
+**返回数据：**
+```
+message ReplyString {
+    string data = 1;
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|data|string|转换生成的地址字符串|
+
 ### 5 构造交易组 CreateRawTxGroup
 **调用接口**
 ```
@@ -451,11 +743,12 @@ message ReqProperFee {
 ```
 
 **参数说明：**
+
 |参数|类型|是否必填|说明|
 |----|----|----|----|
 |txCount|int32|否|预发送的交易个数,单个交易发送默认空即可|
 |txSize|int32|否|预发送交易的大小, 单位Byte, 字节|
-> 
+
 - **通常采用默认传递即可**
 - 对于阶梯交易费模式,在**同时发送多笔交易**时, 可以指定将要发送的个数和总大小(字节)进行前瞻性估计
 
@@ -467,6 +760,7 @@ message ReplyProperFee {
 ```
 
 **参数说明：**
+
 |参数|类型|说明|
 |----|----|----|
 |properFee|int64|每KB交易大小所需交易费, 单位1/10<sup>8</sup>的BTY
@@ -474,20 +768,20 @@ message ReplyProperFee {
 **设置说明：**
 
 - 手动设置
-上述接口返回的是单元大小的交易费率, 即每KB所需的交易费，
-同时交易需要在签名前设置交易费，需要预估签名数据所占用大小，普通交易公私钥签名可预设为300字节
+  上述接口返回的是单元大小的交易费率, 即每KB所需的交易费，
+  同时交易需要在签名前设置交易费，需要预估签名数据所占用大小，普通交易公私钥签名可预设为300字节
 ```go
 //参考代码
 txFee := int64((txSizeKB+300)/1000+1) * properFee
 ```
 
 - 自动设置
-bityuan 6.2.1+版本, 以下接口支持自动设置合适交易费
+  bityuan 6.2.1+版本, 以下接口支持自动设置合适交易费
 	- Chain33.SendToAddress
 	- Chain33.SignRawTx(**交易费参数保留未设置或为0**)
 
 - 失败处理
-在实际应用中, 仍然可能出现交易费过低导致失败情况, 建议代码中增加出错处理,
-如失败时将交易费倍数递增（需要重新签名且注意设置上限，通常是0.1）, 或者等待一段时间继续尝试
-相关错误码:
+  在实际应用中, 仍然可能出现交易费过低导致失败情况, 建议代码中增加出错处理,
+  如失败时将交易费倍数递增（需要重新签名且注意设置上限，通常是0.1）, 或者等待一段时间继续尝试
+  相关错误码:
 >"ErrTxFeeTooLow" 交易手续费太低
