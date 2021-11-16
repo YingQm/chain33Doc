@@ -7,14 +7,14 @@
 2. 创建 grpc 连接`conn, err := grpc.Dial(target string, opts ...DialOption)`
 3. 调用 pb.go 函数，对 conn 进行封装，NewChain33Client(conn)
 
-### 2 例子
+### 2 例子一 CreateRawTransaction
 #### 2.1 调用接口
 ```
 rpc CreateRawTransaction(CreateTx) returns (UnsignTx) {}
 ```
+
 **参数：**
-1. ctx context.Context 类型，默认可以用context.Background(),  其他用法可以参考context 包内容
-2. CreateTx 结构体参数展示
+
 ```
 message CreateTx {
     string to          = 1;
@@ -80,5 +80,129 @@ func main() {
 		panic(err)
 	}
 	txData...
+}
+```
+
+
+### 3 例子二 QueryChain
+#### 3.1 调用接口
+```
+rpc QueryChain(ChainExecutor) returns (Reply) {}
+```
+**参数：**
+```
+message ChainExecutor {
+    string driver    = 1;
+    string funcName  = 2;
+    bytes  stateHash = 3;
+    bytes  param     = 4;
+    bytes  extra     = 5;
+}
+
+message ReqTokens {
+    bool     queryAll          = 1;
+    int32    status            = 2;
+    repeated string tokens     = 3;
+    bool            symbolOnly = 4;
+}
+```
+
+**参数说明：**
+
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|driver|bytes|是|执行器名称, 这里固定为 token|
+|funcName|string|是|操作名称, 这里固定为 GetTokens|
+|stateHash|bytes|否|所有交易在对应的执行器执行后写入KVDB中重新计算得到的新state的哈希值|
+|param|bytes|是|types.Encode(&ReqString)|
+|extra|bytes|否|扩展字段，用于额外的用途|
+|status|int32|是|查询状态|
+|queryAll|bool|是|是否查询所有|
+|tokens|[]string|否|查询标识|
+|symbolOnly|bool|是|是否只返回symbol值 选填（true/false）|
+
+**返回数据：**
+```
+message ReplyTokens {
+    repeated LocalToken tokens = 1;
+}
+
+message LocalToken {
+    string name                = 1;
+    string symbol              = 2;
+    string introduction        = 3;
+    int64  total               = 4;
+    int64  price               = 5;
+    string owner               = 6;
+    string creator             = 7;
+    int32  status              = 8;
+    int64  createdHeight       = 9;
+    int64  createdTime         = 10;
+    int64  prepareCreateHeight = 11;
+    int64  prepareCreateTime   = 12;
+    int32  precision           = 13;
+    // 如果需要这个项可以单独做一个域存储
+    int64 totalTransferTimes = 14;
+    int64 revokedHeight      = 15;
+    int64 revokedTime        = 16;
+    int32 category           = 17;
+}
+```
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|tokens|ReplyTokens|Tokens|
+
+#### 3.2 代码示例
+假定 grpc服务地址：localhost:8802
+```
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"github.com/33cn/chain33/types"
+	tokenTy "github.com/33cn/plugin/plugin/dapp/token/types"
+	"google.golang.org/grpc"
+	"testing"
+)
+
+func main() {
+	con,err:= grpc.Dial("localhost:8802",grpc.WithInsecure())
+	if err!=nil{
+		panic(err)
+	}
+
+	gcli:= types.NewChain33Client(con)
+	ctx:=context.Background()
+	var queryIn types.ChainExecutor
+
+	var req tokenTy.ReqTokens
+	req.QueryAll=true
+	req.SymbolOnly=true
+	req.Status=0
+	queryIn.Driver="token"
+	queryIn.FuncName="GetTokens"
+	queryIn.Param=types.Encode(&req)
+
+	reply,err:= gcli.QueryChain(ctx,&queryIn)
+	if err!=nil{
+		t.Log(err)
+		return
+	}
+	if reply.IsOk{
+		var tokens tokenTy.ReplyTokens
+		err= types.Decode(reply.GetMsg(),&tokens)
+		if err!=nil{
+			t.Log(err)
+			return
+		}
+		jmb,_:=json.MarshalIndent(tokens,"","\t")
+		t.Log("tokens",string(jmb))
+		return
+	}
+
+	t.Log("msg:",string(reply.GetMsg()))
 }
 ```
