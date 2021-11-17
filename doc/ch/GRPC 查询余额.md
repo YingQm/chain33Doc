@@ -50,7 +50,52 @@ message Account {
 |frozen|int64|账户被冻结余额|
 |addr|string|账户地址|
 
-### 2 查询地址所有合约地址余额 GetAllExecBalance
+### 2 查询地址token余额 GetTokenBalance
+**调用接口**
+```
+rpc GetTokenBalance(ReqTokenBalance) returns (Accounts) {}
+```
+**参数：**
+```
+message ReqTokenBalance {
+    repeated string addresses   = 1;
+    string          tokenSymbol = 2;
+    string          execer      = 3;
+}
+```
+
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|
+|addresses|[]string|是|要查询的地址列表|
+|execer|string|是| token 查询可用的余额 ，trade 查询正在交易合约里的token,如果是查询平行链上余额，则需要指定具体平行链的执行器execer,例如：user.p.xxx.token .|
+|tokenSymbol|string|是|token符号名称|
+
+**返回数据：**
+```
+message Accounts {
+    repeated Account acc = 1;
+}
+
+message Account {
+    int32 currency = 1;
+    int64 balance = 2;
+    int64 frozen = 3;
+    string addr = 4;
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|currency|int32|货币类别|
+|balance|int64|账户可用余额|
+|frozen|int64|账户被冻结余额|
+|addr|string|账户地址|
+
+### 3 查询地址所有合约地址余额 GetAllExecBalance
 **调用接口**
 ```
 rpc GetAllExecBalance(ReqAllExecBalance) returns (AllExecBalance) {}

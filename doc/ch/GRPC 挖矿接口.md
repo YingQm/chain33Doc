@@ -2,7 +2,11 @@
 代码位置: `github.com/33cn/plugin/plugin/dapp/ticket/proto`
 
 [TOC]
-### 1 绑定挖矿地址 CreateBindMiner
+### 1 获取执行器地址 ConvertExectoAddr
+
+迁移到[执行器接口](https://chain.33.cn/document/419)
+
+### 2 绑定挖矿地址 CreateBindMiner
 **调用接口**
 ```
 rpc CreateBindMiner(ReqBindMiner) returns (ReplyBindMiner) {}
@@ -39,7 +43,7 @@ message ReplyBindMiner {
 |----|----|----|
 |txhex|string|交易十六进制字符串|
 
-### 2 设置自动挖矿 SetAutoMining
+### 3 设置自动挖矿 SetAutoMining
 **调用接口**
 ```
 rpc SetAutoMining(MinerFlag) returns (Reply) {}
@@ -74,7 +78,7 @@ message Reply {
 |isok|bool|在成功时，返回 true；失败时，返回 false。|
 |msg|bytes|在成功时，为空；失败时，返回错误信息。|
 
-### 3 获取Ticket的数量 GetTicketCount
+### 4 获取Ticket的数量 GetTicketCount
 **调用接口**
 ```
 rpc GetTicketCount(types.ReqNil) returns (Int64) {}
@@ -93,7 +97,142 @@ Int64
 |----|----|----|
 |result|int64|返回ticket的数量|
 
-### 4 构造买票交易 ticket open
+### 5  获取绑定的挖矿地址
+**调用接口**
+```
+rpc QueryChain(ChainExecutor) returns (Reply) {}
+```
+**参数：**
+```
+message ChainExecutor {
+    string driver    = 1;
+    string funcName  = 2;
+    bytes  stateHash = 3;
+    bytes  param     = 4;
+    bytes  extra     = 5;
+}
+message ReqString {
+    string data = 1;
+}
+```
+
+**参数说明：**
+
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|driver|bytes|是|执行器名称, 这里固定为 ticket|
+|funcName|string|是|操作名称, 这里固定为 MinerAddress|
+|stateHash|bytes|否|所有交易在对应的执行器执行后写入KVDB中重新计算得到的新state的哈希值|
+|param|bytes|是|types.Encode(&ReqString)|
+|extra|bytes|否|扩展字段，用于额外的用途|
+|data|string|是|函数参数,data:冷钱包地址|
+
+**返回数据：**
+```
+message ReplyStrings {
+    repeated string datas = 1;
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|datas|[]string|返回挖矿地址|
+
+### 6 获取矿工地址的对应的冷钱包地址
+**调用接口**
+```
+rpc QueryChain(ChainExecutor) returns (Reply) {}
+```
+**参数：**
+```
+message ChainExecutor {
+    string driver    = 1;
+    string funcName  = 2;
+    bytes  stateHash = 3;
+    bytes  param     = 4;
+    bytes  extra     = 5;
+}
+message ReqString {
+    string data = 1;
+}
+```
+
+**参数说明：**
+
+|参数|类型|是否必须|说明|
+|----|----|----|----|
+|driver|bytes|是|执行器名称, 这里固定为 ticket|
+|funcName|string|是|操作名称, 这里固定为 MinerSourceList|
+|stateHash|bytes|否|所有交易在对应的执行器执行后写入KVDB中重新计算得到的新state的哈希值|
+|param|bytes|是|types.Encode(&ReqString)|
+|extra|bytes|否|扩展字段，用于额外的用途|
+|data|string|是|函数参数,data:矿工地址|
+
+**返回数据：**
+```
+message ReplyStrings {
+    repeated string datas = 1;
+}
+```
+
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|datas|[]string|冷钱包地址列表|
+
+### 7 关闭指定账户绑定的tickets
+程序员小哥哥正在努力研发中...
+<div style='display: none'>
+
+**调用接口**
+```
+
+```
+**参数：**
+```
+
+```
+```json
+    {
+        "method":"ticket.CloseTickets",
+        "params":[
+            {
+                "minerAddress":"12HKLEn6g4FH39yUbHh4EVJWcFo5CXg22d",
+            }
+        ]
+}
+```
+**参数说明：**
+
+|参数|类型|是否必填|说明|
+|----|----|----|----|
+|minerAddress|string|否|可以指定账户来只关闭与之绑定的tickets|
+|ticketId|[]string|否|ticketId|
+
+**返回数据：**
+```
+
+```
+```json
+{
+    "id":null,
+    "result":{
+        "hashes":[] string
+    },
+    "error":null
+}
+```
+**参数说明：**
+
+|参数|类型|说明|
+|----|----|----|
+|hashes|[]string|ticket地址列表|
+</div>
+
+### 8 构造买票交易 ticket open
 **调用接口**
 ```
 rpc CreateTransaction(CreateTxIn) returns (UnsignTx) {}
@@ -141,3 +280,7 @@ message UnsignTx {
 |参数|类型|说明|
 |----|----|----|
 |data|bytes|待签名数据|
+
+### 9 构造挖矿交易 ticket miner
+
+ 1. 由于挖矿交易放在区块的第一个交易， 由挖矿时生成， 不需要构造接口。
