@@ -27,20 +27,16 @@ create english backup path:chain33doc-2020-02-20-173155-bak/en/
 now start to backup chinese docs...
 -------60-------
 -------80-------
--------81-------
 ...
--------137-------
 -------138-------
 now start to backup english docs...
 -------142-------
--------143-------
 ...
 -------210-------
-now you can compress the directory chain33doc-2020-02-20-173155-bak to backup the chain33 docs from https://chain.33.cn
-compress to ./chain33doc-2020-02-20-173155-bak.zip ok
+now you can compress the directory chain33doc-2021-02-20-173155-bak to backup the chain33 docs from https://chain.33.cn
 ```
 
-目录A下生成的chain33doc-2020-02-20-173155-bak.zip即为当前时间对文档的备份包。  
+目录A下生成的chain33doc-2021-02-20-173155-bak即为当前时间对文档的备份包。  
 
 # 注意事项
 
@@ -57,6 +53,7 @@ compress to ./chain33doc-2020-02-20-173155-bak.zip ok
 
 从chain33开发者平台上查看开发文档时, 得到的url类似如下：
 https://chain.33.cn/document/60
+
 https://chain.33.cn/document/80
 ...
 
