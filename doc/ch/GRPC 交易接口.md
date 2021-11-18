@@ -300,25 +300,22 @@ message ReplySignRawTx {
 #### 1.6 重写交易 ReWriteRawTx
 支持对原始交易或交易组参数重写
 
-程序员小哥哥正在努力研发中...
-<div style='display: none'>
-
 **调用接口**
 ```
-
+rpc ReWriteTx(ReWriteRawTx)returns(UnsignTx){}
 ```
 **参数：**
 ```
-
-```
-```json
-{
-    "jsonrpc":"2.0",
-    "id":int32,
-    "method":"Chain33.ReWriteRawTx",
-    "params":[{"to":"string","fee":int64,"tx":"string","expire":"string","index":int32}]
+message ReWriteRawTx {
+    string tx = 1;
+    // bytes  execer = 2;
+    string to     = 3;
+    string expire = 4;
+    int64  fee    = 5;
+    int32  index  = 6;
 }
 ```
+
 **参数说明：**
 
 |参数|类型|是否必填|说明|
@@ -329,24 +326,18 @@ message ReplySignRawTx {
 |expire|string|否|过期时间可输入如"300ms"，”-1.5h”或者”2h45m”的字符串，有效时间单位为”ns”, “us” (or “µs”), “ms”, “s”, “m”, “h”|
 |index|int32|否|若是交易组，则为要重写的交易序号，从1开始，小于等于0则为交易组内全部交易|
 
-
 **返回数据：**
 ```
-
-```
-```json
-{
-    "id":int32,
-    "result":{"string"},
-    "error":null
+message UnsignTx {
+    bytes data = 1;
 }
 ```
+
 **参数说明：**
 
 |参数|类型|说明|
 |----|----|----|
-|result|string|重写之后交易的十六进制字符串|
-</div>
+|data|bytes|重写之后交易的十六进制字符串|
 
 #### 1.7 错误信息
 
@@ -417,35 +408,27 @@ message ReceiptData {
 |actionName|string|操作名称，不同的执行器可能会有不同的值，如coins（transfer，withdraw，genesis），ticket（genesis，open，close，miner）|
 |receipt.Ty|int32|receipt.ty == 1 表示执行失败；receipt.ty == 2 表示执行成功|
 
-### 3 根据地址获取交易信息 GetTxByAddr
-程序员小哥哥正在努力研发中...
-<div style='display: none'>
+### 3 根据地址获取交易信息 GetTransactionByAddr
 
 **调用接口**
 ```
-
+rpc GetTransactionByAddr(ReqAddr) returns (ReplyTxInfos) {}
 ```
 **参数：**
 ```
-
-```
-```json
-{
-    "jsonrpc":"2.0",
-    "id":int32,
-    "method":"Chain33.GetTxByAddr",
-    "params":[
-        {
-			"addr":"string",
-			"flag":int32,
-			"count":int32,
-			"direction":int32,
-			"height":int64,
-			"index":int64
-		}
-	]
+message ReqAddr {
+    string addr = 1;
+    //表示取所有/from/to/其他的hash列表
+    int32 flag      = 2;
+    int32 count     = 3;
+    int32 direction = 4;
+    // height start
+    int64 height    = 5;
+    int64 index     = 6;
+    int64 heightEnd = 7;
 }
 ```
+
 **参数说明：**
 
 |参数|类型|是否必填|说明|
@@ -459,133 +442,79 @@ message ReceiptData {
 
 **返回数据：**
 ```
+message ReplyTxInfos {
+    repeated ReplyTxInfo txInfos = 1;
+}
 
-```
-```json
-{
-    "id":int32,
-    "result":
-    {
-        "txInfos":
-        [
-            {
-                "hash": "string",
-                "height": int64,
-                "index": int64,
-                "assets": [
-                      {
-                         "exec":"string",
-						 "symbol":"string",
-						 "amount":int64
-					}
-				]
-			}
-        ]
-    }
+message ReplyTxInfo {
+    bytes    hash         = 1;
+    int64    height       = 2;
+    int64    index        = 3;
+    repeated Asset assets = 4;
+}
+
+message Asset {
+    string exec   = 1;
+    string symbol = 2;
+    int64  amount = 3;
 }
 ```
+
 **参数说明：**
 
 |参数|类型|说明|
 |----|----|----|
-|txInfos|json|交易数组；包含交易的哈希、高度、以及资产信息；|
-|txInfos.hash|string|交易 id，可以通过接口 QueryTransaction 获取具体的交易信息|
-|txInfos.assets|array|资产信息， 列出交易相关的资产。 可能整个数组 为 null|
+|txInfos|[]ReplyTxInfo|交易数组；包含交易的哈希、高度、以及资产信息；|
+|txInfos.hash|bytes|交易 id，可以通过接口 QueryTransaction 获取具体的交易信息|
+|txInfos.assets|[]Asset|资产信息， 列出交易相关的资产。 可能整个数组 为 null|
 
-**示例：**
-Request:
-```json
-{
-    "jsonrpc":"2.0",
-    "id":int32,
-    "method":"Chain33.GetTxByAddr",
-    "params":[
-        {
-			"addr":"1JZqMjcbETCENx2JAsWSQwCGXu25icLpz4",
-			"flag":0,
-			"count":10,
-			"direction":0,
-			"height":-1,
-			"index":0
-		}
-	]
-}
-```
-Response:
-```json
-{
-    "id":int32,
-    "result":
-    {
-        "txInfos":
-        [
-            {
-                "hash": "0xf5eeeaf0471f126078567418bfdfb944e82471fdd41fc32b6bed8c0807d16259",
-                "height": 3705,
-                "index": 4987,
-                "assets": [
-                      {
-                         "exec": "coins", "symbol": "BTY"
-                      }
-                 ]
-            }
-        ]
-    }
-}
-```
-</div>
 
-### 4 根据哈希数组批量获取交易信息 GetTxByHashes
-程序员小哥哥正在努力研发中...
-<div style='display: none'>
+### 4 根据哈希数组批量获取交易信息 GetTransactionByHashes
 
 **调用接口**
 ```
-
+rpc GetTransactionByHashes(ReqHashes) returns (TransactionDetails) {}
 ```
 **参数：**
 ```
-
-```
-```json
-{
-    "jsonrpc":"2.0",
-    "id":int32,
-    "method":"Chain33.GetTxByHashes",
-    "params":[{"hashes":["string"],"disableDetail":bool}]
+message ReqHashes {
+    repeated bytes hashes = 1;
 }
 ```
+
 **参数说明：**
 
 |参数|类型|是否必填|说明|
 |----|----|----|----|
-|hashes|[]string|是|交易ID列表，用逗号“,”分割|
-|disableDetail|bool|否|是否隐藏交易详情，默认为false|
+|hashes|[]bytes|是|交易ID列表|
 
 **返回数据：**
 ```
+message TransactionDetails {
+    repeated TransactionDetail txs = 1;
+}
 
-```
-```json
-{
-    "id":int32,
-    "result":
-    {
-        "txs":
-        [
-            {
-                "tx": {}
-            }
-        ]
-    }
+message TransactionDetail {
+    Transaction tx            = 1;
+    ReceiptData receipt       = 2;
+    repeated bytes proofs     = 3;
+    int64          height     = 4;
+    int64          index      = 5;
+    int64          blocktime  = 6;
+    int64          amount     = 7;
+    string         fromaddr   = 8;
+    string         actionName = 9;
+    repeated Asset assets     = 10;
+    repeated TxProof txProofs = 11;
+    bytes            fullHash = 12;
 }
 ```
+
 **参数说明：**
 
 |参数|类型|说明|
 |----|----|----|
-|tx|json|单个交易详情信息，请参考 QueryTransaction接口|
-</div>
+|txs|[]TransactionDetail|单个交易详情信息，请参考 QueryTransaction接口|
 
 ### 3 根据哈希获取交易的字符串 GetHexTxByHash
 **调用接口**

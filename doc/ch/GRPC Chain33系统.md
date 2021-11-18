@@ -152,49 +152,26 @@ message Reply {
 |isOk|bool|为true时表示同步成功|
 
 ### 5 获取主代币信息 GetCoinSymbol
-程序员小哥哥正在努力研发中...
-<div style='display: none'>
 
 **调用接口**
 ```
-
+rpc GetCoinSymbol(ReqNil)returns(ReplyString){}
 ```
 **参数：**
-```
-
-```
-```json
-{
-    "jsonrpc":"2.0",
-    "id":int32,
-    "method":"Chain33.GetCoinSymbol",
-    "params":[]
-}
-```
-**参数说明：**
-
-|参数|类型|是否必填|说明|
-|----|----|----|----|
+nil
 
 **返回数据：**
 ```
-
-```
-```json
-{
-   "id" : int32,
-   "error" : string,
-   "result" : {
-      "data" : string
-   }
+message ReplyString {
+    string data = 1;
 }
 ```
+
 **参数说明：**
 
 |参数|类型|说明|
 |----|----|----|
 |data|string|当前节点的主代币信息, 如 bty|
-</div>
 
 ### 6 获取系统支持签名类型 GetCryptoList
 程序员小哥哥正在努力研发中...

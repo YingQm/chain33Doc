@@ -360,102 +360,80 @@ message ReplyHash {
 |----|----|----|
 |hash|bytes|交易hash|
 
-#### 2.3 获取钱包交易列表 WalletTxList
-程序员小哥哥正在努力研发中...
-<div style='display: none'>
-
+#### 2.3 获取钱包交易列表 WalletTransactionList
 **调用接口**
 ```
-
+rpc WalletTransactionList(ReqWalletTransactionList) returns (WalletTxDetails) {}
 ```
 **参数：**
 ```
-
-```
-```json
-{
-    "jsonrpc":"2.0",
-    "id":int32,
-    "method":"Chain33.WalletTxList",
-    "params":[{"fromTx":"string","count":int32,"direction":int32}]
+message ReqWalletTransactionList {
+    bytes fromTx    = 1;
+    int32 count     = 2;
+    int32 direction = 3;
 }
 ```
+
 **参数说明：**
 
 |参数|类型|是否必填|说明|
 |----|----|----|----|
-|fromTx|string|是|Sprintf("%018d", height*100000 + index)，表示从高度 height 中的 index 开始获取交易列表；第一次传参为空，获取最新的交易|
+|fromTx|bytes|是|Sprintf("%018d", height*100000 + index)，表示从高度 height 中的 index 开始获取交易列表；第一次传参为空，获取最新的交易|
 |count|int32|是|获取交易列表的个数|
 |direction|int32|是|查找方式；0，获取最新的交易数据，倒叙排序，在交易列表中时间高度是递减的；1，正序排序，按照时间，区块高度增加的方向获取交易列表|
-|mode|int32|是|获取交易列表的个数|
-|sendRecvPrivacy|int32|否||
-|address|string|否||
-|tokenname|string|否||
 
 **返回数据：**
 ```
+message WalletTxDetails {
+    repeated WalletTxDetail txDetails = 1;
+}
 
-```
-```json
-{
-    "id":0,
-    result":
-    {
-        "txDetails":
-        [
-            {
-                "tx":
-                {
-                    "execer":"coins",
-                    "payload":"0x18010a061080c8afa025",
-                    "signature":
-                    {
-                        "ty":0,
-                        "pubkey":"0x02504fa1c28caaf1d5a20fefb87c50a49724ff401043420cb3ba271997eb5a4387",
-                        "signature":"0x304402200319c88c5cc349d6c75671f880e6dba2fc46268fe92f9b62ac4b4b52f63cdb700220153374f999044073fb3d12ba686eeb1f237291e3586eafdc4151f44030f86258"
-                    },
-                    "fee":1000000,
-                    "expire":0,
-                    "nonce":6281838661429879825,
-                    "to":"1Dx744a6KQpDmv76sFMeR7W5SaQGREA2Bu"
-                },
-                "receipt":
-                {
-                    "ty":3,
-                    "logs":
-                    [
-                        {
-                            "ty":2,
-                            "log":"0x08c0cebafefbcf2a1080cafdfdfbcf2a18c0fbc2ffffffffffff01"
-                        },
-                        {
-                            "ty":3,
-                            "log":"0x0880cafdfdfbcf2a108082ceddd6cf2a1880b8d0dfdaffffffff01"
-                        },
-                        {
-                            "ty":3,
-                            "log":"0x1080c8afa0251880c8afa025"
-                        }
-                    ]
-                },
-                "height":21706,
-                "index":75,
-                "blockTime":1516110740,
-                "amount":10000000000,
-                "fromAddr":"14KEKbYtKKQm4wMthSK9J4La4nAiidGozt",
-                "txHash":"0xc33717bad521f075966a1ed3835904d0acab863493e9cce5d3cd08e7df934751"
-                "actionName": "genesis"
-            }
-        ]
-    }
+message WalletTxDetail {
+    Transaction tx         = 1;
+    ReceiptData receipt    = 2;
+    int64       height     = 3;
+    int64       index      = 4;
+    int64       blocktime  = 5;
+    int64       amount     = 6;
+    string      fromaddr   = 7;
+    bytes       txhash     = 8;
+    string      actionName = 9;
+    bytes       payload    = 10;
+}
+
+message Transaction {
+    bytes     execer    = 1;
+    bytes     payload   = 2;
+    Signature signature = 3;
+    int64     fee       = 4;
+    int64     expire    = 5;
+    //随机ID，可以防止payload 相同的时候，交易重复
+    int64 nonce = 6;
+    //对方地址，如果没有对方地址，可以为空
+    string to         = 7;
+    int32  groupCount = 8;
+    bytes  header     = 9;
+    bytes  next       = 10;
+    int32  chainID    = 11;
+}
+
+message ReceiptData {
+    int32    ty              = 1;
+    repeated ReceiptLog logs = 3;
+}
+
+message ReceiptLog {
+    int32 ty  = 1;
+    bytes log = 2;
 }
 ```
+
 **参数说明：**
 
 |参数|类型|说明|
 |----|----|----|
-|execer|string|当其值等于 "coins" 表示交易与钱包相关，其他过滤|
-|payload|string|交易内容，需要解析|
+|execer|bytes|当其值等于 "coins" 表示交易与钱包相关，其他过滤|
+|payload|bytes|交易内容，需要解析|
 |signature|Signature|交易签名|
 |fee|int64|交易手续费|
 |expire|int64|交易过期区块高度或者时间，大于 1e9 时，表示时间，否则表示高度|
@@ -464,10 +442,8 @@ message ReplyHash {
 |receipt|ReceiptLog|中当 ty 等于 2 时，交易有效|
 |height|int64|交易所在区块高度|
 |index|int64|用于获取交易|
-|txhash|string|交易哈希|
+|txhash|bytes|交易哈希|
 |actionname|string|coins（transfer，withdraw，genesis），ticket（genesis，open，close，miner 挖矿所得）|
-
-</div>
 
 ### 3 交易签名 SignRawTx
 **调用接口**
