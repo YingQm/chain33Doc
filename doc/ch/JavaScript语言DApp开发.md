@@ -295,7 +295,7 @@ Query.prototype.ListGameByAddr = function(args) {
 **参数说明：**
 
 |参数|类型|是否必填|说明|
-|----|----|----|----|----|
+|----|----|----|----|
 |execer|string|是|执行器名称，这里固定为jsvm|
 |actionName|string|是|操作名称，这里固定为Create|
 |payload.code|string|是|javascript代码|
@@ -439,7 +439,7 @@ Response:
 **参数说明：**
 
 |参数|类型|是否必填|说明|
-|----|----|----|----|----|
+|----|----|----|----|
 |execer|string|是|执行器名称，这里固定为jsvm|
 |funcName|string|是|操作名称，这里固定为Query|
 |payload.name|string|是|合约名|

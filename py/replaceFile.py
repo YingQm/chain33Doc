@@ -61,7 +61,23 @@ def change():
          if not os.path.isdir(file): #判断是否是文件夹，不是文件夹才打开
             alter(path+"/"+file)
 
-change()
+# change()
 # alter("交易接口.md")
 
+def replaceAll(filePath, oldInfo, newInfo):
+    files= os.listdir(filePath) #得到文件夹下的所有文件名称
+    for file in files: #遍历文件夹
+         if not os.path.isdir(file): #判断是否是文件夹，不是文件夹才打开
+             path_file=filePath+"/"+file
+             file_data = ""
+             with open(path_file, "r", encoding="utf-8") as f:
+                 for line in f:
+                     if oldInfo in line:
+                         print("line 0:", line, path_file)
+                         line=line.replace(oldInfo, newInfo)
+                         print("line 1:", line)
+                     file_data += line
+             with open(path_file,"w",encoding="utf-8") as f:
+                f.write(file_data)
 
+replaceAll("../doc/ch", "|----|----|----|----|----|", "|----|----|----|----|")

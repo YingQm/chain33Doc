@@ -21,9 +21,9 @@ Flags:
   -p, --parameter string   (optional)parameter for constructor and should be input as constructor(xxx,xxx,xxx)
 ```
 **参数说明：**
-    
+
 |参数|类型|是否必填|说明|
-|----|----|----|----|----|
+|----|----|----|----|
 |abi|string|否|部署合约abi字符串，只有需要填充构造函数参数时才需要|
 |alias|string|否|部署合约别名|
 |code|string|是|部署合约字节码|
@@ -83,9 +83,9 @@ Flags:
   -x, --tx string       tx string(should be signatured)
 ```
 **参数说明：**
-    
+
 |参数|类型|是否必填|说明|
-|----|----|----|----|----|
+|----|----|----|----|
 |caller|string|是|交易调用地址|
 |tx|string|是|未签名交易字符串|
 
@@ -108,9 +108,9 @@ Flags:
 
 ```
 **参数说明：**
-    
+
 |参数|类型|是否必填|说明|
-|----|----|----|----|----|
+|----|----|----|----|
 |address|string|是|合约地址|
 |caller|string|是|交易调用地址|
 |input|string|是|查询输入参数，使用格式“foobar(param1,param2)”|
@@ -131,9 +131,9 @@ Flags:
   -r, --receiver string   receiver address
 ```
 **参数说明：**
-    
+
 |参数|类型|是否必填|说明|
-|----|----|----|----|----|
+|----|----|----|----|
 |amount|小数，精确到0.0001|是|转账额度|
 |caller|string|是|转账交易发起人地址|
 |receiver|string|是|接收地址|

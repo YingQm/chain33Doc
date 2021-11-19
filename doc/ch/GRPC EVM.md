@@ -84,7 +84,7 @@ message EstimateEVMGasResp {
 **参数说明：**
 
 |参数|类型|是否必填|说明|
-|----|----|----|----|----|
+|----|----|----|----|
 |parameter|string|是|部署合约的参数 "constructor(zbc, zbc, 3300, '${evm_creatorAddr}')" 原型为 constructor (string memory name_, string memory symbol_,uint256 supply, address owner),这里表示部署一个名称和symbol都为 zbc，总金额3300*le8，拥有者为 evm_creatorAddr 的ERC20合约|
 |abi|string|是|部署合约的 abi 内容|
 |code|string|是|需要部署合约的 bin 内容|
@@ -147,7 +147,7 @@ message EstimateEVMGasResp {
 **参数说明：**
 
 |参数|类型|是否必填|说明|
-|----|----|----|----|----|
+|----|----|----|----|
 |parameter|string|是|操作合约的参数，例如转账交易 "transfer('${evm_transferAddr}', 20)"|
 |abi|string|是|部署合约的 abi 内容|
 |contractAddr|string|是|合约地址|
@@ -203,7 +203,7 @@ message EstimateEVMGasResp {
 **参数说明：**
 
 |参数|类型|是否必填|说明|
-|----|----|----|----|----|
+|----|----|----|----|
 |caller|string|是|部署合约的地址|
 |txhash|string|是|创建合约的交易哈希，去掉前面的 0x|
 
